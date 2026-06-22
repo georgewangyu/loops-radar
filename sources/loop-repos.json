@@ -14,6 +14,115 @@
     ]
   },
   {
+    "repo": "Forward-Future/loop-library",
+    "branch": "main",
+    "label": "Forward Future Loop Library",
+    "category": "Loop catalog",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "forward-future",
+    "type": "forward-future-catalog",
+    "catalogUrl": "https://signals.forwardfuture.ai/loop-library/catalog.json",
+    "categoryBySlug": {
+      "engineering": "Engineering loops",
+      "evaluation": "Evaluation loops",
+      "operations": "Operations loops",
+      "content": "Content loops",
+      "design": "Design loops"
+    }
+  },
+  {
+    "repo": "serenakeyitan/awesome-agent-loops",
+    "branch": "main",
+    "label": "Awesome Agent Loops",
+    "category": "Command loops",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "awesome-agent-loops",
+    "type": "markdown-sections",
+    "include": [
+      "^README\\.md$"
+    ],
+    "categoryByGroup": {
+      "`/loop` — repeat on an interval": "Interval command loops",
+      "`/goal` — run until a condition is true": "Goal command loops",
+      "`/schedule` — cron in the cloud": "Scheduled command loops"
+    }
+  },
+  {
+    "repo": "ChaoYue0307/awesome-loop-engineering",
+    "branch": "main",
+    "label": "ChaoYue Awesome Loop Engineering",
+    "category": "Loop contracts",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "chaoyue",
+    "include": [
+      "^examples/[^/]+-loop\\.json$",
+      "^examples/runnable/(claude-loop|shell-cron-loop)\\.md$"
+    ]
+  },
+  {
+    "repo": "cobusgreyling/loop-engineering",
+    "branch": "main",
+    "label": "Cobus Loop Engineering",
+    "category": "Loop patterns",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "cobus",
+    "include": [
+      "^patterns/(daily-triage|pr-babysitter|ci-sweeper|dependency-sweeper|changelog-drafter|post-merge-cleanup|issue-triage)\\.md$"
+    ]
+  },
+  {
+    "repo": "Rybens92/pi-pipelines",
+    "branch": "master",
+    "label": "Pi Pipelines",
+    "category": "Pipeline loops",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "pi-pipelines",
+    "include": [
+      "^pipelines/[^/]+\\.pipeline\\.yaml$"
+    ]
+  },
+  {
+    "repo": "rohanbalkondekar/agent-loop-patterns",
+    "branch": "main",
+    "label": "Agent Loop Patterns",
+    "category": "Queue loop patterns",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "agent-loop-patterns",
+    "include": [
+      "^patterns/[^/]+/README\\.md$"
+    ]
+  },
+  {
+    "repo": "invincible04/awesome-loop-engineering",
+    "branch": "main",
+    "label": "Invincible Awesome Loop Engineering",
+    "category": "Loop prompt libraries",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "invincible",
+    "include": [
+      "^prompts/(automations|goal-and-loop|loop-contracts|ralph-loops|subagents-maker-checker|verification-rubrics)\\.md$"
+    ]
+  },
+  {
+    "repo": "tim-osterhus/millrace",
+    "branch": "main",
+    "label": "Millrace",
+    "category": "Runtime loop assets",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "millrace",
+    "include": [
+      "^src/millrace_ai/assets/loops/.+\\.json$"
+    ]
+  },
+  {
     "repo": "anthropics/skills",
     "branch": "main",
     "label": "Anthropic Skills",

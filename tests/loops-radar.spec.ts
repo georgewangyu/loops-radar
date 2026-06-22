@@ -3,6 +3,14 @@ import { loops } from "../lib/loops";
 
 const detailPageSample = [
   "weekly-agent-loop-scan",
+  "forward-future-overnight-docs-sweep",
+  "awesome-agent-loops-kill-flaky-tests",
+  "chaoyue-bug-hunting-loop",
+  "cobus-patterns-changelog-drafter",
+  "pi-pipelines-pipelines-automatic-loop",
+  "agent-loop-patterns-patterns-metric-optimization-loop-readme",
+  "invincible-prompts-automations",
+  "millrace-src-millrace-ai-assets-execution-lad",
   "anthropic-web-artifacts-builder",
   "addy-code-review-and-quality",
   "superpowers-brainstorming",
@@ -150,6 +158,9 @@ test.describe("Loop detail pages", () => {
     const sourceNames = new Set(loops.map((loop) => loop.sourceName));
 
     expect(sourceNames.has("GeorgeLoops")).toBe(true);
+    expect(sourceNames.has("Forward Future Loop Library")).toBe(true);
+    expect(sourceNames.has("Awesome Agent Loops")).toBe(true);
+    expect(sourceNames.has("Pi Pipelines")).toBe(true);
     expect(sourceNames.has("Anthropic Skills")).toBe(true);
     expect(sourceNames.has("Addy Osmani Agent Skills")).toBe(true);
     expect(sourceNames.size).toBeGreaterThanOrEqual(5);
