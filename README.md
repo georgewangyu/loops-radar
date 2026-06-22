@@ -3,6 +3,8 @@
 A Vercel-deployable catalog of reusable agent, research, content, coding, and
 operations loops.
 
+Live site: https://loops-radar.vercel.app
+
 The current site starts with GeorgeLoops and selected public agent-skill repos,
 then uses the accepted catalog-first design:
 
@@ -44,6 +46,14 @@ npm run dev -- --port 4189
 ```
 
 Open `http://localhost:4189`.
+
+## Try The Main Flow
+
+1. Search for a loop by keyword.
+2. Filter by category or status.
+3. Open a loop detail page.
+4. Copy the source markdown.
+5. Submit a public issue or private review request from the contribution form.
 
 ## Verification
 
