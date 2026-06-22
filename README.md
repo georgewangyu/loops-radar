@@ -9,10 +9,24 @@ catalog-first design:
 - searchable loop index
 - category and status filters
 - selected loop detail section
-- copyable loop recipes
+- copyable source markdown from the public GeorgeLoops repo
 - bottom contribution form
 - public issue submission by default
 - private review issue route when selected
+
+## GeorgeLoops Sync
+
+Loops Radar treats the public GeorgeLoops markdown as the source of truth.
+
+```sh
+npm run sync:georgeloops
+```
+
+The sync command reads `loops/*/LOOP.md` and `goals/*/GOAL.md` from
+`georgewangyu/GeorgeLoops`, regenerates `lib/loops.ts`, and keeps each detail
+page's copy block aligned with the exact source markdown. A weekly GitHub
+Actions workflow opens a pull request when the public GeorgeLoops source
+changes.
 
 ## Local Development
 

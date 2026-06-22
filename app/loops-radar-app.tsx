@@ -92,25 +92,7 @@ export function LoopsRadarApp({ loops }: Props) {
   }
 
   async function copyLoop(loop: Loop) {
-    const text = [
-      `# ${loop.name}`,
-      "",
-      loop.summary,
-      "",
-      "## Inputs",
-      ...loop.inputs.map((input) => `- ${input}`),
-      "",
-      "## Workflow",
-      ...loop.steps.map((step, index) => `${index + 1}. ${step}`),
-      "",
-      "## Outputs",
-      ...loop.outputs.map((output) => `- ${output}`),
-      "",
-      "## Verifier",
-      loop.verifier,
-    ].join("\n");
-
-    await navigator.clipboard.writeText(text);
+    await navigator.clipboard.writeText(loop.markdown);
     setCopied(loop.id);
     window.setTimeout(() => setCopied(""), 1400);
   }
@@ -373,8 +355,11 @@ export function LoopsRadarApp({ loops }: Props) {
             </div>
             <div className="mini-meta">
               <span>Source</span>
-              <strong>{selectedLoop.sourcePath}</strong>
+              <a href={selectedLoop.sourceUrl}>{selectedLoop.sourcePath}</a>
             </div>
+            <pre className="markdown-recipe markdown-preview" aria-label="Source markdown preview">
+              <code>{selectedLoop.markdown}</code>
+            </pre>
             <Link className="primary wide detail-link" href={`/loops/${selectedLoop.id}`}>
               Open full loop page
             </Link>

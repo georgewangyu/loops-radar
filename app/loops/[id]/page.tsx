@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLoopById, loops } from "@/lib/loops";
+import { CopyMarkdownButton } from "./copy-markdown-button";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -65,47 +66,22 @@ export default async function LoopPage({ params }: Props) {
             </div>
             <div className="mini-meta">
               <span>Source</span>
-              <strong>{loop.sourcePath}</strong>
+              <a href={loop.sourceUrl}>{loop.sourcePath}</a>
             </div>
           </aside>
         </section>
 
-        <section className="loop-page-section">
-          <h2>Why this loop exists</h2>
-          <p>{loop.whyUseful}</p>
-        </section>
-
-        <section className="loop-page-grid">
-          <div className="loop-page-section">
-            <h2>Inputs</h2>
-            <ul>
-              {loop.inputs.map((input) => (
-                <li key={input}>{input}</li>
-              ))}
-            </ul>
+        <section className="loop-page-section markdown-section">
+          <div className="markdown-heading">
+            <div>
+              <p className="eyebrow">Source recipe</p>
+              <h2>Copyable Markdown</h2>
+            </div>
+            <CopyMarkdownButton markdown={loop.markdown} />
           </div>
-          <div className="loop-page-section">
-            <h2>Outputs</h2>
-            <ul>
-              {loop.outputs.map((output) => (
-                <li key={output}>{output}</li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        <section className="loop-page-section">
-          <h2>Workflow</h2>
-          <ol className="steps">
-            {loop.steps.map((step) => (
-              <li key={step}>{step}</li>
-            ))}
-          </ol>
-        </section>
-
-        <section className="loop-page-section verifier-section">
-          <h2>Verifier</h2>
-          <p>{loop.verifier}</p>
+          <pre className="markdown-recipe">
+            <code>{loop.markdown}</code>
+          </pre>
         </section>
       </article>
     </main>

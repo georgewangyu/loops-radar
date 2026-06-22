@@ -9,8 +9,8 @@ test.describe("Loops Radar catalog", () => {
     await expect(page.getByRole("heading", { name: "Loops Radar", level: 1 })).toBeVisible();
     await expect(page.getByText(`${loops.length} matching loops`)).toBeVisible();
 
-    await page.getByPlaceholder("Search loops...").fill("thumbnail");
-    await expect(page.getByText("Thumbnail Iteration Loop")).toBeVisible();
+    await page.getByPlaceholder("Search loops...").fill("warehouse");
+    await expect(page.getByText("Monitor AI Warehouse and Wono")).toBeVisible();
     await expect(page.getByText("1 matching loops")).toBeVisible();
 
     await page.getByRole("button", { name: "Clear filters" }).click();
@@ -26,11 +26,12 @@ test.describe("Loops Radar catalog", () => {
     await weeklyRow.getByRole("link", { name: /Weekly Agent Loop Scan/ }).click();
     await expect(page).toHaveURL(/\/loops\/weekly-agent-loop-scan$/);
     await expect(page.getByRole("heading", { name: "Weekly Agent Loop Scan", level: 1 })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Workflow", level: 2 })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Verifier", level: 2 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Copyable Markdown", level: 2 })).toBeVisible();
+    await expect(page.getByText("## Workflow")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Copy markdown" })).toBeVisible();
   });
 
-  test("copy button writes a complete loop recipe", async ({ page, context }) => {
+  test("copy button writes the source GeorgeLoops markdown", async ({ page, context }) => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.goto("/");
 
@@ -38,8 +39,9 @@ test.describe("Loops Radar catalog", () => {
     await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
 
     const clipboard = await page.evaluate(() => navigator.clipboard.readText());
-    expect(clipboard).toContain("# Daily Morning Routine");
-    expect(clipboard).toContain("## Verifier");
+    expect(clipboard).toBe(loops[0].markdown);
+    expect(clipboard).toContain("---");
+    expect(clipboard).toContain(`# ${loops[0].name}`);
   });
 
   test("submit form defaults to public issue route and shows success", async ({ page }) => {
@@ -93,12 +95,23 @@ test.describe("Loop detail pages", () => {
       await page.goto(`/loops/${loop.id}`);
 
       await expect(page.getByRole("heading", { name: loop.name, level: 1 })).toBeVisible();
-      await expect(page.getByRole("heading", { name: "Inputs", level: 2 })).toBeVisible();
-      await expect(page.getByRole("heading", { name: "Workflow", level: 2 })).toBeVisible();
-      await expect(page.getByRole("heading", { name: "Outputs", level: 2 })).toBeVisible();
-      await expect(page.getByRole("heading", { name: "Verifier", level: 2 })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Copyable Markdown", level: 2 })).toBeVisible();
+      await expect(page.getByText(loop.sourcePath)).toBeVisible();
+      await expect(page.getByText(`# ${loop.name}`)).toBeVisible();
     });
   }
+
+  test("detail page copy button writes source markdown", async ({ page, context }) => {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    const loop = loops.find((item) => item.id === "weekly-agent-loop-scan") || loops[0];
+
+    await page.goto(`/loops/${loop.id}`);
+    await page.getByRole("button", { name: "Copy markdown" }).click();
+    await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
+
+    const clipboard = await page.evaluate(() => navigator.clipboard.readText());
+    expect(clipboard).toBe(loop.markdown);
+  });
 
   test("detail page navigation returns to catalog and submit form", async ({ page }) => {
     await page.goto("/loops/weekly-agent-loop-scan");
