@@ -66,7 +66,9 @@ export default async function LoopPage({ params }: Props) {
             </div>
             <div className="mini-meta">
               <span>Source</span>
-              <a href={loop.sourceUrl}>{loop.sourcePath}</a>
+              <a href={loop.sourceUrl}>
+                {loop.sourceName} / {loop.sourcePath}
+              </a>
             </div>
           </aside>
         </section>

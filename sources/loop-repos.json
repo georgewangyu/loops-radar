@@ -1,0 +1,112 @@
+[
+  {
+    "repo": "georgewangyu/GeorgeLoops",
+    "branch": "master",
+    "label": "GeorgeLoops",
+    "category": "Meta systems",
+    "defaultStatus": "reference",
+    "defaultCadence": "manual",
+    "preserveIds": true,
+    "idPrefix": "georgeloops",
+    "include": [
+      "^loops/[^/]+/LOOP\\.md$",
+      "^goals/[^/]+/GOAL\\.md$"
+    ]
+  },
+  {
+    "repo": "anthropics/skills",
+    "branch": "main",
+    "label": "Anthropic Skills",
+    "category": "Official skills",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "anthropic",
+    "include": [
+      "^skills/[^/]+/SKILL\\.md$"
+    ]
+  },
+  {
+    "repo": "addyosmani/agent-skills",
+    "branch": "main",
+    "label": "Addy Osmani Agent Skills",
+    "category": "Engineering skills",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "addy",
+    "include": [
+      "^skills/[^/]+/SKILL\\.md$"
+    ]
+  },
+  {
+    "repo": "obra/superpowers",
+    "branch": "main",
+    "label": "Superpowers",
+    "category": "Engineering skills",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "superpowers",
+    "include": [
+      "^skills/[^/]+/SKILL\\.md$"
+    ]
+  },
+  {
+    "repo": "vercel-labs/agent-skills",
+    "branch": "main",
+    "label": "Vercel Agent Skills",
+    "category": "Frontend/deploy skills",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "vercel",
+    "include": [
+      "^skills/[^/]+/SKILL\\.md$"
+    ]
+  },
+  {
+    "repo": "phuryn/pm-skills",
+    "branch": "main",
+    "label": "PM Skills",
+    "category": "Product skills",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "pm",
+    "include": [
+      "^pm-[^/]+/skills/[^/]+/SKILL\\.md$"
+    ]
+  },
+  {
+    "repo": "Dimillian/Skills",
+    "branch": "main",
+    "label": "Dimillian Skills",
+    "category": "Codex skills",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "dimillian",
+    "include": [
+      "^[^/]+/SKILL\\.md$"
+    ]
+  },
+  {
+    "repo": "markdown-viewer/skills",
+    "branch": "main",
+    "label": "Markdown Viewer Skills",
+    "category": "Visual/document skills",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "markdown-viewer",
+    "include": [
+      "^[^/]+/SKILL\\.md$"
+    ]
+  },
+  {
+    "repo": "mvanhorn/last30days-skill",
+    "branch": "main",
+    "label": "Last30Days Skill",
+    "category": "Research skills",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "last30days",
+    "include": [
+      "^skills/last30days/SKILL\\.md$"
+    ]
+  }
+]

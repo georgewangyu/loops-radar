@@ -334,7 +334,7 @@ h3 {
 
 .product-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 112px 82px 78px;
+  grid-template-columns: minmax(0, 1fr) minmax(92px, 150px) 82px 78px;
   align-items: center;
   gap: 12px;
   padding: 16px;
@@ -506,12 +506,14 @@ h3 {
   padding: 6px 9px;
   font-size: 12px;
   font-weight: 780;
-  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .tag {
   border: 1px solid #d6cdbd;
   background: #fff;
+  max-width: 150px;
+  overflow-wrap: anywhere;
 }
 
 .status {
@@ -525,7 +527,8 @@ h3 {
 }
 
 .status-reference,
-.status-idea {
+.status-idea,
+.status-external {
   background: rgba(20, 87, 255, 0.09);
   color: var(--accent);
 }

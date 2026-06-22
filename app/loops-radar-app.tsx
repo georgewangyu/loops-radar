@@ -3,7 +3,7 @@
 import { FormEvent, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Loop } from "@/lib/loops";
-import { categories, statuses } from "@/lib/loops";
+import { categories, loopSourceCount, statuses } from "@/lib/loops";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -69,6 +69,9 @@ export function LoopsRadarApp({ loops }: Props) {
         loop.category,
         loop.status,
         loop.cadence,
+        loop.sourceName,
+        loop.sourceRepo,
+        loop.markdown,
         loop.inputs.join(" "),
         loop.steps.join(" "),
       ]
@@ -167,8 +170,8 @@ export function LoopsRadarApp({ loops }: Props) {
         <aside className="hero-note">
           <strong>{loops.length} loops loaded</strong>
           <span>
-            Starting with GeorgeLoops definitions, including active loops,
-            testing loops, and reusable goal recipes.
+            Synced from {loopSourceCount} public markdown sources, starting with
+            GeorgeLoops and selected agent-skill repos.
           </span>
         </aside>
       </section>
@@ -355,7 +358,9 @@ export function LoopsRadarApp({ loops }: Props) {
             </div>
             <div className="mini-meta">
               <span>Source</span>
-              <a href={selectedLoop.sourceUrl}>{selectedLoop.sourcePath}</a>
+              <a href={selectedLoop.sourceUrl}>
+                {selectedLoop.sourceName} / {selectedLoop.sourcePath}
+              </a>
             </div>
             <pre className="markdown-recipe markdown-preview" aria-label="Source markdown preview">
               <code>{selectedLoop.markdown}</code>

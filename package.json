@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "sync:loops": "node scripts/sync-georgeloops.mjs",
     "sync:georgeloops": "node scripts/sync-georgeloops.mjs",
     "typecheck": "tsc --noEmit",
     "test:ui": "playwright test"

@@ -3,30 +3,38 @@
 A Vercel-deployable catalog of reusable agent, research, content, coding, and
 operations loops.
 
-The current site starts with GeorgeLoops content and uses the accepted
-catalog-first design:
+The current site starts with GeorgeLoops and selected public agent-skill repos,
+then uses the accepted catalog-first design:
 
 - searchable loop index
 - category and status filters
 - selected loop detail section
-- copyable source markdown from the public GeorgeLoops repo
+- copyable source markdown from the public source repos
 - bottom contribution form
 - public issue submission by default
 - private review issue route when selected
 
-## GeorgeLoops Sync
+## Source Sync
 
-Loops Radar treats the public GeorgeLoops markdown as the source of truth.
+Loops Radar treats public markdown repos as source material. The source list is
+tracked in `sources/loop-repos.md` for humans and `sources/loop-repos.json` for
+automation.
 
 ```sh
-npm run sync:georgeloops
+npm run sync:loops
 ```
 
-The sync command reads `loops/*/LOOP.md` and `goals/*/GOAL.md` from
-`georgewangyu/GeorgeLoops`, regenerates `lib/loops.ts`, and keeps each detail
-page's copy block aligned with the exact source markdown. A weekly GitHub
-Actions workflow opens a pull request when the public GeorgeLoops source
-changes.
+The sync command reads `LOOP.md`, `GOAL.md`, and selected `SKILL.md` files from
+the configured repos, regenerates `lib/loops.ts`, and keeps each detail page's
+copy block aligned with the exact source markdown. GeorgeLoops keeps stable IDs
+for existing public URLs; external repos are prefixed by source to avoid ID
+collisions. A weekly GitHub Actions workflow opens a pull request when public
+source markdown changes.
+
+The first external pass includes Anthropic Skills, Addy Osmani Agent Skills,
+Superpowers, Vercel Agent Skills, PM Skills, Dimillian Skills, Markdown Viewer
+Skills, and Last30Days Skill. Broad aggregators and massive catalogs are kept in
+the source watchlist until ranking/import rules are stronger.
 
 ## Local Development
 
@@ -47,8 +55,8 @@ npm run test:ui
 
 `npm run test:ui` runs the Playwright suite against a production `next start`
 server. It covers catalog search/filtering, preview buttons, row click-through
-to loop pages, every generated loop detail page, copy-to-clipboard, mocked issue
-submission, and mobile overflow.
+to loop pages, representative generated detail pages across sources,
+copy-to-clipboard, mocked issue submission, and mobile overflow.
 
 Playwright traces and reports are ignored by git.
 

@@ -1,4 +1,4 @@
-name: Sync GeorgeLoops
+name: Sync Loop Sources
 
 on:
   schedule:
@@ -25,10 +25,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Sync public GeorgeLoops markdown
-        run: npm run sync:georgeloops
+      - name: Sync public loop source markdown
+        run: npm run sync:loops
         env:
-          GEORGELOOPS_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Verify synced app
@@ -39,10 +38,10 @@ jobs:
       - name: Open pull request when loops change
         uses: peter-evans/create-pull-request@v7
         with:
-          branch: automation/sync-georgeloops
-          commit-message: "Sync GeorgeLoops markdown"
-          title: "Sync GeorgeLoops markdown"
+          branch: automation/sync-loop-sources
+          commit-message: "Sync loop source markdown"
+          title: "Sync loop source markdown"
           body: |
-            Weekly sync from georgewangyu/GeorgeLoops.
+            Weekly sync from configured public loop sources.
 
-            This updates Loops Radar so each loop detail page copies the source markdown from the public GeorgeLoops repo.
+            This updates Loops Radar so each loop detail page copies the source markdown from the public source repos listed in `sources/loop-repos.json`.
