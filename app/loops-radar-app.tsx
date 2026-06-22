@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Loop } from "@/lib/loops";
 import { categories, loopSourceCount, statuses } from "@/lib/loops";
@@ -21,6 +21,8 @@ const submissionTypes = [
   ["request-loop", "Request loop"],
   ["improve-loop", "Improve loop"],
 ] as const;
+
+const pageSize = 24;
 
 const issueLabels: Record<string, string> = {
   title: "Loop title",
@@ -55,6 +57,7 @@ export function LoopsRadarApp({ loops }: Props) {
   const [formStatus, setFormStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState("");
+  const [page, setPage] = useState(1);
 
   const filteredLoops = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -86,8 +89,18 @@ export function LoopsRadarApp({ loops }: Props) {
     });
   }, [category, loops, query, status]);
 
+  const pageCount = Math.max(1, Math.ceil(filteredLoops.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const pageStart = (currentPage - 1) * pageSize;
+  const pageEnd = Math.min(pageStart + pageSize, filteredLoops.length);
+  const visibleLoops = filteredLoops.slice(pageStart, pageEnd);
+
+  useEffect(() => {
+    setPage(1);
+  }, [category, query, status]);
+
   const selectedLoop =
-    loops.find((loop) => loop.id === selectedId) || filteredLoops[0] || loops[0];
+    filteredLoops.find((loop) => loop.id === selectedId) || filteredLoops[0] || loops[0];
 
   function previewLoop(loop: Loop) {
     setSelectedId(loop.id);
@@ -238,7 +251,12 @@ export function LoopsRadarApp({ loops }: Props) {
           </div>
 
           <div className="list-meta">
-            <span>{filteredLoops.length} matching loops</span>
+            <span>
+              {filteredLoops.length} matching loops
+              {filteredLoops.length > 0
+                ? ` / showing ${pageStart + 1}-${pageEnd}`
+                : ""}
+            </span>
             {(query || category !== "All" || status !== "All") && (
               <button
                 className="text-button"
@@ -246,6 +264,7 @@ export function LoopsRadarApp({ loops }: Props) {
                   setQuery("");
                   setCategory("All");
                   setStatus("All");
+                  setPage(1);
                 }}
                 type="button"
               >
@@ -255,8 +274,8 @@ export function LoopsRadarApp({ loops }: Props) {
           </div>
 
           <div className="product-table">
-            {filteredLoops.length > 0 ? (
-              filteredLoops.map((loop) => (
+            {visibleLoops.length > 0 ? (
+              visibleLoops.map((loop) => (
                 <article
                   className={
                     selectedLoop?.id === loop.id
@@ -293,6 +312,30 @@ export function LoopsRadarApp({ loops }: Props) {
               </div>
             )}
           </div>
+
+          {filteredLoops.length > pageSize ? (
+            <nav className="pagination" aria-label="Loop pagination">
+              <button
+                className="page-button"
+                disabled={currentPage === 1}
+                onClick={() => setPage((value) => Math.max(1, value - 1))}
+                type="button"
+              >
+                Previous
+              </button>
+              <span className="page-status">
+                Page {currentPage} of {pageCount}
+              </span>
+              <button
+                className="page-button"
+                disabled={currentPage === pageCount}
+                onClick={() => setPage((value) => Math.min(pageCount, value + 1))}
+                type="button"
+              >
+                Next
+              </button>
+            </nav>
+          ) : null}
         </section>
 
         {selectedLoop ? (

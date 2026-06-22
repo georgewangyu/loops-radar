@@ -458,6 +458,38 @@ h3 {
   text-transform: none;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.page-button {
+  min-width: 92px;
+  border: 1px solid #cfd8d3;
+  border-radius: 999px;
+  background: #fff;
+  color: #30342f;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 780;
+}
+
+.page-button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.page-status {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 820;
+  text-transform: uppercase;
+}
+
 .loop-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 128px 90px 78px;

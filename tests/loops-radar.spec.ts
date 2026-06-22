@@ -23,9 +23,15 @@ test.describe("Loops Radar catalog", () => {
     await expect(page.getByRole("heading", { name: "Loops Radar", level: 1 })).toBeVisible();
     await expect(page.getByText("public markdown sources")).toBeVisible();
     await expect(page.getByText(`${loops.length} matching loops`)).toBeVisible();
+    await expect(page.getByText("showing 1-24")).toBeVisible();
 
     await page.getByPlaceholder("Search loops...").fill("wono_strategy");
-    await expect(page.getByText("Monitor AI Warehouse and Wono")).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Monitor AI Warehouse and Wono" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Monitor AI Warehouse and Wono", level: 2 }),
+    ).toBeVisible();
     await expect(page.getByText("1 matching loops")).toBeVisible();
 
     await page.getByRole("button", { name: "Clear filters" }).click();
@@ -44,6 +50,26 @@ test.describe("Loops Radar catalog", () => {
     await expect(page.getByRole("heading", { name: "Copyable Markdown", level: 2 })).toBeVisible();
     await expect(page.getByText("## Workflow")).toBeVisible();
     await expect(page.getByRole("button", { name: "Copy markdown" })).toBeVisible();
+  });
+
+  test("pagination moves through the catalog and resets for search", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(page.getByText(`Page 1 of ${Math.ceil(loops.length / 24)}`)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Previous" })).toBeDisabled();
+
+    await page.getByRole("button", { name: "Next" }).click();
+    await expect(page.getByText("Page 2 of")).toBeVisible();
+    await expect(page.getByText("showing 25-48")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Previous" })).toBeEnabled();
+
+    await page.getByPlaceholder("Search loops...").fill("wono_strategy");
+    await expect(page.getByText("1 matching loops")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Monitor AI Warehouse and Wono", level: 2 }),
+    ).toBeVisible();
+    await expect(page.getByText("Page 1 of")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Next" })).toHaveCount(0);
   });
 
   test("copy button writes the source GeorgeLoops markdown", async ({ page, context }) => {
