@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "feed:latest": "node scripts/prepare-latest-feed.mjs",
+    "feed:weekly": "node scripts/create-weekly-feed.mjs",
     "start": "next start",
     "sync:loops": "node scripts/sync-georgeloops.mjs",
     "sync:georgeloops": "node scripts/sync-georgeloops.mjs",

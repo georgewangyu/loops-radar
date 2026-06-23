@@ -1,20 +1,144 @@
 # Loops Radar
 
-A Vercel-deployable catalog of reusable agent, research, content, coding, and
-operations loops.
+Find loops worth running.
+
+Loops Radar is a public catalog and digest layer for reusable AI-agent loops:
+goal recipes, daily workflows, engineering loops, content loops, operations
+loops, and loop-pattern repos. The website lets people search and copy source
+markdown. The installed skill lets an agent search the catalog, adapt a loop to
+the work ahead, and deliver a daily or weekly digest from the public weekly
+feed.
 
 Live site: https://loops-radar.vercel.app
 
-The current site starts with GeorgeLoops and selected public agent-skill repos,
-then uses the accepted catalog-first design:
+## What You Get
 
-- searchable loop index
-- category and status filters
-- selected loop detail section
-- copyable source markdown from the public source repos
-- bottom contribution form
-- public issue submission by default
-- private review issue route when selected
+- Searchable public catalog of reusable loops.
+- Copyable source markdown from public source repos.
+- Weekly feed of newly added or featured loops.
+- Daily rotation pulled from the latest weekly feed.
+- Agent skill for selecting, adapting, and summarizing loops.
+- Public contribution form, with private review available for rough ideas.
+
+## Quick Start
+
+Pick your agent and run the install command, then ask the agent to set it up.
+
+### OpenClaw
+
+```bash
+git clone https://github.com/georgewangyu/loops-radar.git ~/skills/loops-radar
+```
+
+```text
+set up Loops Radar
+```
+
+### Claude Code
+
+```bash
+mkdir -p ~/.claude/skills && git clone https://github.com/georgewangyu/loops-radar.git ~/.claude/skills/loops-radar
+```
+
+```text
+set up Loops Radar
+```
+
+### Codex
+
+```bash
+mkdir -p ~/.codex/skills && git clone https://github.com/georgewangyu/loops-radar.git ~/.codex/skills/loops-radar
+```
+
+Or use the skill installer:
+
+```bash
+npx skills add georgewangyu/loops-radar --skill loops-radar -g
+```
+
+```text
+set up Loops Radar
+```
+
+### Cursor / Other Agents
+
+```bash
+git clone https://github.com/georgewangyu/loops-radar.git ~/skills/loops-radar
+```
+
+```text
+Use ~/skills/loops-radar/skills/loops-radar/SKILL.md and set up Loops Radar.
+```
+
+The agent walks you through:
+
+- daily, weekly, or on-demand digest schedule
+- delivery time and timezone
+- language: English, Chinese, or bilingual
+- tone: concise, operator, or technical
+- delivery: current chat, Telegram, email, or an OpenClaw channel
+
+No source API keys are required from users. The public catalog and feed are
+generated centrally. Users only need delivery credentials if they choose
+Telegram or email outside OpenClaw.
+
+Node.js 20+ is only needed for scheduled non-OpenClaw Telegram/email delivery
+through the included scripts. Chat-only use does not require installing npm
+packages.
+
+## Delivery Options
+
+### OpenClaw
+
+OpenClaw can deliver to its configured channels:
+
+- Telegram
+- Telegram forum topics
+- Feishu
+- Discord
+- Slack
+- WhatsApp
+- Signal
+
+The skill creates an `openclaw cron add` job with an explicit `--channel` and
+`--to` target.
+
+### Claude Code, Codex, Cursor, or Other Agents
+
+Without OpenClaw or another persistent runtime, automatic delivery is limited
+to:
+
+- Telegram through a user-owned Telegram bot
+- email through a user-owned Resend API key
+- on-demand in the current chat
+
+For scheduled Telegram/email delivery, the skill installs a local `crontab`
+entry that sends the latest public markdown feed. For a fully agent-remixed
+digest, ask the skill in chat or use a persistent agent runtime.
+
+## Changing Settings
+
+Just tell your agent:
+
+- "Switch to weekly digests on Monday mornings"
+- "Switch to daily loop picks"
+- "Change language to bilingual"
+- "Send this to Telegram instead"
+- "Make the digest shorter"
+- "Show me my current settings"
+
+Settings are saved locally in `~/.loops-radar/config.json`. Delivery keys, if
+used, are saved locally in `~/.loops-radar/.env`.
+
+## Customizing Summaries
+
+The skill uses a plain markdown prompt:
+
+- [summarize-latest-feed.md](prompts/summarize-latest-feed.md)
+
+Ask your agent to make the digest shorter, more technical, more operator-style,
+or more action-oriented. It can copy prompts into `~/.loops-radar/prompts/` for
+local customization.
 
 ## Source Sync
 
@@ -30,13 +154,40 @@ The sync command reads `LOOP.md`, `GOAL.md`, and selected `SKILL.md` files from
 the configured repos, regenerates `lib/loops.ts`, and keeps each detail page's
 copy block aligned with the exact source markdown. GeorgeLoops keeps stable IDs
 for existing public URLs; external repos are prefixed by source to avoid ID
-collisions. A weekly GitHub Actions workflow opens a pull request when public
-source markdown changes.
+collisions.
 
-The first external pass includes Anthropic Skills, Addy Osmani Agent Skills,
-Superpowers, Vercel Agent Skills, PM Skills, Dimillian Skills, Markdown Viewer
-Skills, and Last30Days Skill. Broad aggregators and massive catalogs are kept in
-the source watchlist until ranking/import rules are stronger.
+The current source list lives in:
+
+- [sources/loop-repos.md](sources/loop-repos.md)
+- [sources/loop-repos.json](sources/loop-repos.json)
+
+Broad aggregators and massive catalogs stay in the source watchlist until
+ranking/import rules are strong enough.
+
+## Weekly Feed
+
+The weekly digest feed is generated after source sync:
+
+```sh
+npm run feed:weekly
+```
+
+Feed files live under:
+
+```text
+feeds/YYYY/MM/YYYY-MM-DD.md
+```
+
+The feed script compares the current generated catalog with
+`memory/seen-loop-ids.json`, highlights newly seen loops first, and then records
+the current catalog as the new baseline. If no new loops are found, the feed can
+still provide a featured rotation from the existing catalog.
+
+Read the newest feed:
+
+```sh
+npm run --silent feed:latest
+```
 
 ## Local Development
 
@@ -54,10 +205,13 @@ Open `http://localhost:4189`.
 3. Open a loop detail page.
 4. Copy the source markdown.
 5. Submit a public issue or private review request from the contribution form.
+6. Install the skill and ask for a daily or weekly digest.
 
 ## Verification
 
 ```sh
+npm run feed:weekly
+npm run --silent feed:latest
 npm run typecheck
 npm run build
 npm run test:ui
@@ -69,6 +223,22 @@ to loop pages, representative generated detail pages across sources,
 copy-to-clipboard, mocked issue submission, and mobile overflow.
 
 Playwright traces and reports are ignored by git.
+
+## How It Works
+
+1. The weekly automation runs `npm run sync:loops`.
+2. If the catalog changes, it verifies, commits, and pushes safe public updates.
+3. It runs `npm run feed:weekly` to create the newest public feed.
+4. The installed skill reads the latest feed and summarizes it using user
+   preferences.
+5. The digest is shown in chat or delivered to the configured channel.
+
+## Privacy
+
+- The repo contains only public-safe catalog and feed content.
+- User delivery credentials stay local.
+- The skill does not ask users for source API keys.
+- The skill does not read private George context.
 
 ## Vercel
 

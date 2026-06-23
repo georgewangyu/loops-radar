@@ -337,7 +337,8 @@ export function LoopsRadarApp({ loops }: Props) {
           <h2 id="agent-setup-title">Use Loops Radar in your coding agent.</h2>
           <p>
             Install the skill so your agent can search the catalog, choose a
-            relevant loop, and adapt the source markdown into the work at hand.
+            relevant loop, adapt the source markdown into the work ahead, and
+            deliver daily or weekly loop digests from the public weekly feed.
           </p>
         </div>
         <div className="setup-command">
@@ -453,8 +454,8 @@ export function LoopsRadarApp({ loops }: Props) {
               <p className="eyebrow">Contribute</p>
               <h2>Missing a loop?</h2>
               <p>
-                Send a rough workflow from here without scrolling to the full
-                request form.
+                Send a rough workflow through the full request form at the
+                bottom of the page.
               </p>
             </div>
             <div className="quick-submit-actions">

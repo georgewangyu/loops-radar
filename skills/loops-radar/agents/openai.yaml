@@ -1,5 +1,5 @@
 interface:
   display_name: "Loops Radar"
-  short_description: "Find and adapt reusable agent loops"
+  short_description: "Find, adapt, and digest reusable agent loops"
   brand_color: "#111111"
   default_prompt: "Use $loops-radar to find a reusable agent loop for this workflow."
