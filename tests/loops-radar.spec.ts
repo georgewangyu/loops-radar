@@ -30,15 +30,16 @@ test.describe("Loops Radar catalog", () => {
     await expect(page).toHaveTitle("Loops Radar");
     await expect(page.getByRole("heading", { name: "Loops Radar", level: 1 })).toBeVisible();
     await expect(page.getByText("public markdown sources")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Use Loops Radar in your coding agent.", level: 2 }),
+    ).toBeVisible();
+    await expect(page.getByText("npx skills add georgewangyu/loops-radar")).toBeVisible();
     await expect(page.getByText(`${loops.length} matching loops`)).toBeVisible();
     await expect(page.getByText("showing 1-12")).toBeVisible();
 
     await page.getByPlaceholder("Search loops...").fill("wono_strategy");
     await expect(
       page.getByRole("link", { name: "Monitor AI Warehouse and Wono" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Monitor AI Warehouse and Wono", level: 2 }),
     ).toBeVisible();
     await expect(page.getByText("1 matching loops")).toBeVisible();
 
@@ -49,9 +50,6 @@ test.describe("Loops Radar catalog", () => {
 
     await page.getByRole("button", { name: "Clear filters" }).click();
     const weeklyRow = page.locator("article", { hasText: "Weekly Agent Loop Scan" });
-    await weeklyRow.getByRole("button", { name: "Preview" }).click();
-    await expect(page.getByRole("heading", { name: "Weekly Agent Loop Scan", level: 2 })).toBeVisible();
-
     await weeklyRow.getByRole("link", { name: /Weekly Agent Loop Scan/ }).click();
     await expect(page).toHaveURL(/\/loops\/weekly-agent-loop-scan$/);
     await expect(page.getByRole("heading", { name: "Weekly Agent Loop Scan", level: 1 })).toBeVisible();
@@ -74,7 +72,7 @@ test.describe("Loops Radar catalog", () => {
     await page.getByPlaceholder("Search loops...").fill("wono_strategy");
     await expect(page.getByText("1 matching loops")).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: "Monitor AI Warehouse and Wono", level: 2 }),
+      page.getByRole("link", { name: "Monitor AI Warehouse and Wono" }),
     ).toBeVisible();
     await expect(page.getByText("Page 1 of")).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Next" })).toHaveCount(0);
@@ -84,13 +82,24 @@ test.describe("Loops Radar catalog", () => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.goto("/");
 
-    await page.getByRole("button", { name: "Copy" }).first().click();
-    await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
+    await page.getByRole("button", { name: "Copy loop" }).first().click();
+    await expect(page.getByRole("button", { name: "Copied" }).first()).toBeVisible();
 
     const clipboard = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboard).toBe(loops[0].markdown);
     expect(clipboard).toContain("---");
     expect(clipboard).toContain(`# ${loops[0].name}`);
+  });
+
+  test("setup command copies from the agent skill card", async ({ page, context }) => {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.goto("/");
+
+    await page.getByRole("button", { name: "Copy command" }).click();
+    await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
+
+    const clipboard = await page.evaluate(() => navigator.clipboard.readText());
+    expect(clipboard).toBe("npx skills add georgewangyu/loops-radar --skill loops-radar -g");
   });
 
   test("submit form defaults to public issue route and shows success", async ({ page }) => {

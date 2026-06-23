@@ -32,6 +32,8 @@ const issueLabels: Record<string, string> = {
   handle: "Handle",
 };
 
+const skillInstallCommand = "npx skills add georgewangyu/loops-radar --skill loops-radar -g";
+
 async function errorMessageFor(response: Response) {
   if (response.status !== 400) {
     return "Something went wrong. Try again or send the idea another way.";
@@ -53,7 +55,6 @@ export function LoopsRadarApp({ loops }: Props) {
   const [category, setCategory] = useState("All");
   const [status, setStatus] = useState("All");
   const [source, setSource] = useState("All");
-  const [selectedId, setSelectedId] = useState(loops[0]?.id || "");
   const [submissionType, setSubmissionType] = useState("submit-loop");
   const [formStatus, setFormStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
@@ -103,17 +104,15 @@ export function LoopsRadarApp({ loops }: Props) {
     setPage(1);
   }, [category, query, source, status]);
 
-  const selectedLoop =
-    filteredLoops.find((loop) => loop.id === selectedId) || filteredLoops[0] || loops[0];
-
-  function previewLoop(loop: Loop) {
-    setSelectedId(loop.id);
-    window.history.replaceState(null, "", `#${loop.id}`);
-  }
-
   async function copyLoop(loop: Loop) {
     await navigator.clipboard.writeText(loop.markdown);
     setCopied(loop.id);
+    window.setTimeout(() => setCopied(""), 1400);
+  }
+
+  async function copySetupCommand() {
+    await navigator.clipboard.writeText(skillInstallCommand);
+    setCopied("setup-command");
     window.setTimeout(() => setCopied(""), 1400);
   }
 
@@ -166,7 +165,6 @@ export function LoopsRadarApp({ loops }: Props) {
         </a>
         <nav className="nav-pills" aria-label="Page navigation">
           <a href="#catalog">Catalog</a>
-          <a href="#selected">Selected loop</a>
           <a href="#submit">Submit</a>
         </nav>
         <a className="primary nav-submit" href="#submit">
@@ -191,6 +189,28 @@ export function LoopsRadarApp({ loops }: Props) {
             GeorgeLoops and selected agent-skill repos.
           </span>
         </aside>
+      </section>
+
+      <section className="agent-setup" aria-labelledby="agent-setup-title">
+        <div>
+          <p className="eyebrow">Agent skill</p>
+          <h2 id="agent-setup-title">Use Loops Radar in your coding agent.</h2>
+          <p>
+            Install the skill so your agent can search the catalog, choose a
+            relevant loop, and adapt the source markdown into the work at hand.
+          </p>
+        </div>
+        <div className="setup-command">
+          <code>{skillInstallCommand}</code>
+          <div className="setup-actions">
+            <button onClick={copySetupCommand} type="button">
+              {copied === "setup-command" ? "Copied" : "Copy command"}
+            </button>
+            <a href="https://github.com/georgewangyu/loops-radar">
+              View repository
+            </a>
+          </div>
+        </div>
       </section>
 
       <section className="product-grid" id="catalog" aria-label="Loops catalog">
@@ -371,11 +391,7 @@ export function LoopsRadarApp({ loops }: Props) {
             {visibleLoops.length > 0 ? (
               visibleLoops.map((loop) => (
                 <article
-                  className={
-                    selectedLoop?.id === loop.id
-                      ? "product-row selected"
-                      : "product-row"
-                  }
+                  className="product-row"
                   id={loop.id}
                   key={loop.id}
                 >
@@ -383,20 +399,22 @@ export function LoopsRadarApp({ loops }: Props) {
                     className="loop-row-main"
                     href={`/loops/${loop.id}`}
                   >
+                    <span className="loop-kicker">
+                      {loop.category} / {loop.sourceName}
+                    </span>
                     <span className="loop-name">{loop.name}</span>
                     <span className="loop-desc">{loop.summary}</span>
                   </Link>
-                  <span className="tag">{loop.category}</span>
-                  <span className={`status status-${loop.status}`}>
-                    {loop.status}
-                  </span>
                   <button
-                    className="copy preview"
-                    onClick={() => previewLoop(loop)}
+                    className="copy loop-copy"
+                    onClick={() => copyLoop(loop)}
                     type="button"
                   >
-                    Preview
+                    {copied === loop.id ? "Copied" : "Copy loop"}
                   </button>
+                  <Link className="text-button row-open" href={`/loops/${loop.id}`}>
+                    Open
+                  </Link>
                 </article>
               ))
             ) : (
@@ -431,82 +449,6 @@ export function LoopsRadarApp({ loops }: Props) {
             </nav>
           ) : null}
         </section>
-
-        {selectedLoop ? (
-          <aside
-            className="product-detail"
-            id="selected"
-            aria-labelledby="selected-title"
-          >
-            <div className="detail-heading">
-              <div>
-                <p className="eyebrow">{selectedLoop.category}</p>
-                <h2 id="selected-title">{selectedLoop.name}</h2>
-              </div>
-              <button
-                className="copy"
-                onClick={() => copyLoop(selectedLoop)}
-                type="button"
-              >
-                {copied === selectedLoop.id ? "Copied" : "Copy"}
-              </button>
-            </div>
-
-            <p>{selectedLoop.whyUseful}</p>
-
-            <div className="detail-meta-strip" aria-label="Selected loop metadata">
-              <span className={`status status-${selectedLoop.status}`}>
-                {selectedLoop.status}
-              </span>
-              <span>{selectedLoop.cadence}</span>
-            </div>
-
-            <div className="verifier-panel">
-              <h3>Verifier</h3>
-              <p>{selectedLoop.verifier}</p>
-            </div>
-
-            <div className="mini-section">
-              <h3>Inputs</h3>
-              <ul>
-                {selectedLoop.inputs.map((input) => (
-                  <li key={input}>{input}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="mini-section">
-              <h3>Workflow</h3>
-              <ol className="steps">
-                {selectedLoop.steps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ol>
-            </div>
-
-            <div className="mini-section">
-              <h3>Outputs</h3>
-              <ul>
-                {selectedLoop.outputs.map((output) => (
-                  <li key={output}>{output}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="mini-meta">
-              <span>Source</span>
-              <a href={selectedLoop.sourceUrl}>
-                {selectedLoop.sourceName} / {selectedLoop.sourcePath}
-              </a>
-            </div>
-            <pre className="markdown-recipe markdown-preview" aria-label="Source markdown preview">
-              <code>{selectedLoop.markdown}</code>
-            </pre>
-            <Link className="primary wide detail-link" href={`/loops/${selectedLoop.id}`}>
-              Open full loop page
-            </Link>
-          </aside>
-        ) : null}
       </section>
 
       <section className="submit-section" id="submit">
