@@ -53,8 +53,10 @@ test.describe("Loops Radar catalog", () => {
     await page.getByRole("button", { name: "Goal recipe 1" }).click();
     await expect(page.getByText("Refactor Until Architecture Settles").first()).toBeVisible();
     await expect(page.getByText("1 matching loops")).toBeVisible();
+    await page.getByRole("button", { name: "Goal recipe 1" }).click();
+    await expect(page.getByText(`${loops.length} matching loops`)).toBeVisible();
+    await expect(page.getByRole("button", { name: `All collections ${loops.length}` })).toBeVisible();
 
-    await page.getByRole("button", { name: "Clear filters" }).click();
     await page.getByPlaceholder("Search loops...").fill("Weekly Agent Loop Scan");
     await expect(page.getByText("1 matching loops")).toBeVisible();
     const weeklyRow = page.locator("article", { hasText: "Weekly Agent Loop Scan" });

@@ -377,17 +377,23 @@ export function LoopsRadarApp({ loops }: Props) {
 
           <p className="rail-title lower">Collections</p>
           <div className="rail-list">
-            {categories.map((item) => (
-              <button
-                className={category === item ? "rail-item active" : "rail-item"}
-                key={item}
-                onClick={() => setCategory(item)}
-                type="button"
-              >
-                <span>{item}</span>
-                <span>{loops.filter((loop) => loop.category === item).length}</span>
-              </button>
-            ))}
+            {[["All", "All collections"], ...categories.map((item) => [item, item])].map(
+              ([value, label]) => (
+                <button
+                  className={category === value ? "rail-item active" : "rail-item"}
+                  key={value}
+                  onClick={() => setCategory(category === value ? "All" : value)}
+                  type="button"
+                >
+                  <span>{label}</span>
+                  <span>
+                    {value === "All"
+                      ? loops.length
+                      : loops.filter((loop) => loop.category === value).length}
+                  </span>
+                </button>
+              ),
+            )}
           </div>
         </aside>
 
