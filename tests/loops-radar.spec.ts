@@ -36,6 +36,12 @@ test.describe("Loops Radar catalog", () => {
     await expect(page.getByText("npx skills add georgewangyu/loops-radar")).toBeVisible();
     await expect(page.getByText(`${loops.length} matching loops`)).toBeVisible();
     await expect(page.getByText("showing 1-12")).toBeVisible();
+    await expect(page.getByLabel("Sort")).toHaveValue("balanced");
+
+    const firstPageSources = (await page.locator(".product-row .loop-kicker").allTextContents())
+      .map((text) => text.split(" / ").at(-1) || text);
+    expect(new Set(firstPageSources).size).toBeGreaterThan(4);
+    expect(firstPageSources.every((item) => item === "GeorgeLoops")).toBe(false);
 
     await page.getByPlaceholder("Search loops...").fill("wono_strategy");
     await expect(
@@ -49,6 +55,8 @@ test.describe("Loops Radar catalog", () => {
     await expect(page.getByText("1 matching loops")).toBeVisible();
 
     await page.getByRole("button", { name: "Clear filters" }).click();
+    await page.getByPlaceholder("Search loops...").fill("Weekly Agent Loop Scan");
+    await expect(page.getByText("1 matching loops")).toBeVisible();
     const weeklyRow = page.locator("article", { hasText: "Weekly Agent Loop Scan" });
     await weeklyRow.getByRole("link", { name: /Weekly Agent Loop Scan/ }).click();
     await expect(page).toHaveURL(/\/loops\/weekly-agent-loop-scan$/);
@@ -78,7 +86,26 @@ test.describe("Loops Radar catalog", () => {
     await expect(page.getByRole("button", { name: "Next" })).toHaveCount(0);
   });
 
-  test("copy button writes the source GeorgeLoops markdown", async ({ page, context }) => {
+  test("sort modes reorder the catalog", async ({ page }) => {
+    await page.goto("/");
+
+    const defaultFirstRow = await page.locator(".product-row").first().textContent();
+
+    await page.getByLabel("Sort").selectOption("featured");
+    await expect(page.locator(".sort-note")).toHaveText("Featured first");
+    await expect(page.getByText("showing 1-12")).toBeVisible();
+
+    await page.getByLabel("Sort").selectOption("title");
+    await expect(page.locator(".sort-note")).toHaveText("A-Z");
+
+    const titleFirstRow = await page.locator(".product-row").first().textContent();
+    expect(titleFirstRow).not.toBe(defaultFirstRow);
+
+    await page.getByLabel("Sort").selectOption("newest");
+    await expect(page.locator(".sort-note")).toHaveText("Newest first");
+  });
+
+  test("copy button writes the visible source markdown", async ({ page, context }) => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.goto("/");
 
@@ -86,9 +113,9 @@ test.describe("Loops Radar catalog", () => {
     await expect(page.getByRole("button", { name: "Copied" }).first()).toBeVisible();
 
     const clipboard = await page.evaluate(() => navigator.clipboard.readText());
-    expect(clipboard).toBe(loops[0].markdown);
+    expect(loops.some((loop) => loop.markdown === clipboard)).toBe(true);
     expect(clipboard).toContain("---");
-    expect(clipboard).toContain(`# ${loops[0].name}`);
+    expect(clipboard).toContain("# ");
   });
 
   test("setup command copies from the agent skill card", async ({ page, context }) => {

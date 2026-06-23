@@ -16,11 +16,20 @@ type Props = {
   loops: Loop[];
 };
 
+type SortMode = "balanced" | "featured" | "newest" | "title";
+
 const submissionTypes = [
   ["submit-loop", "Submit loop"],
   ["request-loop", "Request loop"],
   ["improve-loop", "Improve loop"],
 ] as const;
+
+const sortOptions: Array<[SortMode, string]> = [
+  ["balanced", "Balanced sources"],
+  ["featured", "Featured first"],
+  ["newest", "Newest first"],
+  ["title", "A-Z"],
+];
 
 const pageSize = 12;
 
@@ -33,6 +42,27 @@ const issueLabels: Record<string, string> = {
 };
 
 const skillInstallCommand = "npx skills add georgewangyu/loops-radar --skill loops-radar -g";
+
+const featuredLoopIds = new Set([
+  "refactor-until-architecture-settles",
+  "weekly-agent-loop-scan",
+  "forward-future-overnight-docs-sweep",
+  "forward-future-architecture-satisfaction-loop",
+  "forward-future-full-product-evaluation-loop",
+  "awesome-agent-loops-kill-flaky-tests",
+  "awesome-agent-loops-run-until-green",
+  "chaoyue-bug-hunting-loop",
+  "cobus-patterns-pr-babysitter",
+  "pi-pipelines-pipelines-automatic-loop",
+  "agent-loop-patterns-patterns-metric-optimization-loop-readme",
+  "invincible-goal-and-loop",
+  "anthropic-code-reviewer",
+  "addy-code-review-and-quality",
+  "superpowers-execute-tasks",
+  "vercel-deploy-to-vercel",
+  "pm-pm-execution-sprint-plan",
+  "dimillian-review-and-simplify-changes",
+]);
 
 async function errorMessageFor(response: Response) {
   if (response.status !== 400) {
@@ -50,17 +80,124 @@ async function errorMessageFor(response: Response) {
     : body?.error || "Please check the form and try again.";
 }
 
+function parseLoopDate(loop: Loop) {
+  const isoMatch = loop.markdown.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
+
+  if (isoMatch) {
+    return Date.parse(`${isoMatch[1]}T00:00:00Z`);
+  }
+
+  const writtenMatch = loop.markdown.match(
+    /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2},\s+20\d{2}\b/i,
+  );
+
+  return writtenMatch ? Date.parse(writtenMatch[0]) : 0;
+}
+
+function featuredScore(loop: Loop) {
+  if (featuredLoopIds.has(loop.id)) {
+    return 3;
+  }
+
+  const text = `${loop.name} ${loop.summary} ${loop.markdown}`.toLowerCase();
+
+  if (text.includes("featured")) {
+    return 2;
+  }
+
+  if (
+    text.includes("evaluation") ||
+    text.includes("review") ||
+    text.includes("verification") ||
+    text.includes("architecture") ||
+    text.includes("product")
+  ) {
+    return 1;
+  }
+
+  return 0;
+}
+
+function compareByTitle(left: Loop, right: Loop) {
+  return left.name.localeCompare(right.name, undefined, { sensitivity: "base" });
+}
+
+function compareForFeatured(left: Loop, right: Loop) {
+  return (
+    featuredScore(right) - featuredScore(left) ||
+    parseLoopDate(right) - parseLoopDate(left) ||
+    compareByTitle(left, right)
+  );
+}
+
+function balanceBySource(items: Loop[], sourceOrder: Map<string, number>, sortGroup = compareForFeatured) {
+  const groups = new Map<string, Loop[]>();
+
+  for (const loop of items) {
+    const group = groups.get(loop.sourceName) || [];
+    group.push(loop);
+    groups.set(loop.sourceName, group);
+  }
+
+  for (const group of groups.values()) {
+    group.sort(sortGroup);
+  }
+
+  const orderedSources = Array.from(groups.keys()).sort((left, right) => {
+    return (sourceOrder.get(left) ?? 999) - (sourceOrder.get(right) ?? 999);
+  });
+  const balanced: Loop[] = [];
+  let index = 0;
+
+  while (balanced.length < items.length) {
+    for (const sourceName of orderedSources) {
+      const group = groups.get(sourceName);
+
+      if (group?.[index]) {
+        balanced.push(group[index]);
+      }
+    }
+
+    index += 1;
+  }
+
+  return balanced;
+}
+
+function sortLoops(items: Loop[], sortMode: SortMode, sourceOrder: Map<string, number>) {
+  if (sortMode === "title") {
+    return [...items].sort(compareByTitle);
+  }
+
+  if (sortMode === "newest") {
+    return [...items].sort((left, right) => {
+      return parseLoopDate(right) - parseLoopDate(left) || compareForFeatured(left, right);
+    });
+  }
+
+  if (sortMode === "featured") {
+    return [...items].sort(compareForFeatured);
+  }
+
+  return balanceBySource(items, sourceOrder);
+}
+
 export function LoopsRadarApp({ loops }: Props) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [status, setStatus] = useState("All");
   const [source, setSource] = useState("All");
+  const [sortMode, setSortMode] = useState<SortMode>("balanced");
   const [submissionType, setSubmissionType] = useState("submit-loop");
   const [formStatus, setFormStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState("");
   const [page, setPage] = useState(1);
   const [quickSubmitOpen, setQuickSubmitOpen] = useState(false);
+  const sourceOrder = useMemo(
+    () => new Map(sourceNames.map((sourceName, index) => [sourceName, index])),
+    [],
+  );
 
   const filteredLoops = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -93,16 +230,20 @@ export function LoopsRadarApp({ loops }: Props) {
       );
     });
   }, [category, loops, query, source, status]);
+  const sortedLoops = useMemo(
+    () => sortLoops(filteredLoops, sortMode, sourceOrder),
+    [filteredLoops, sortMode, sourceOrder],
+  );
 
-  const pageCount = Math.max(1, Math.ceil(filteredLoops.length / pageSize));
+  const pageCount = Math.max(1, Math.ceil(sortedLoops.length / pageSize));
   const currentPage = Math.min(page, pageCount);
   const pageStart = (currentPage - 1) * pageSize;
-  const pageEnd = Math.min(pageStart + pageSize, filteredLoops.length);
-  const visibleLoops = filteredLoops.slice(pageStart, pageEnd);
+  const pageEnd = Math.min(pageStart + pageSize, sortedLoops.length);
+  const visibleLoops = sortedLoops.slice(pageStart, pageEnd);
 
   useEffect(() => {
     setPage(1);
-  }, [category, query, source, status]);
+  }, [category, query, source, sortMode, status]);
 
   async function copyLoop(loop: Loop) {
     await navigator.clipboard.writeText(loop.markdown);
@@ -185,8 +326,8 @@ export function LoopsRadarApp({ loops }: Props) {
         <aside className="hero-note">
           <strong>{loops.length} loops loaded</strong>
           <span>
-            Synced from {loopSourceCount} public markdown sources, starting with
-            GeorgeLoops and selected agent-skill repos.
+            Synced from {loopSourceCount} public markdown sources and balanced
+            across loop catalogs, patterns, and agent skills.
           </span>
         </aside>
       </section>
@@ -261,6 +402,19 @@ export function LoopsRadarApp({ loops }: Props) {
               />
             </label>
             <div className="toolbar-selects" aria-label="Catalog filters">
+              <label className="select-control">
+                <span>Sort</span>
+                <select
+                  value={sortMode}
+                  onChange={(event) => setSortMode(event.target.value as SortMode)}
+                >
+                  {sortOptions.map(([value, label]) => (
+                    <option value={value} key={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <label className="select-control">
                 <span>Collection</span>
                 <select
@@ -365,12 +519,19 @@ export function LoopsRadarApp({ loops }: Props) {
 
           <div className="list-meta">
             <span>
-              {filteredLoops.length} matching loops
-              {filteredLoops.length > 0
+              {sortedLoops.length} matching loops
+              {sortedLoops.length > 0
                 ? ` / showing ${pageStart + 1}-${pageEnd}`
                 : ""}
             </span>
-            {(query || category !== "All" || status !== "All" || source !== "All") && (
+            <span className="sort-note">
+              {sortOptions.find(([value]) => value === sortMode)?.[1]}
+            </span>
+            {(query ||
+              category !== "All" ||
+              status !== "All" ||
+              source !== "All" ||
+              sortMode !== "balanced") && (
               <button
                 className="text-button"
                 onClick={() => {
@@ -378,6 +539,7 @@ export function LoopsRadarApp({ loops }: Props) {
                   setCategory("All");
                   setStatus("All");
                   setSource("All");
+                  setSortMode("balanced");
                   setPage(1);
                 }}
                 type="button"
@@ -425,7 +587,7 @@ export function LoopsRadarApp({ loops }: Props) {
             )}
           </div>
 
-          {filteredLoops.length > pageSize ? (
+          {sortedLoops.length > pageSize ? (
             <nav className="pagination" aria-label="Loop pagination">
               <button
                 className="page-button"

@@ -364,6 +364,7 @@ h3 {
   display: grid;
   grid-template-columns: 230px minmax(0, 1fr);
   min-height: 680px;
+  scroll-margin-top: 92px;
   border: 1px solid rgba(22, 22, 22, 0.13);
   border-top: 0;
   background: #f8faf9;
@@ -389,7 +390,7 @@ h3 {
 
 .catalog-toolbar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-columns: minmax(0, 1fr) 540px;
   gap: 12px;
   align-items: end;
   margin-bottom: 16px;
@@ -397,7 +398,7 @@ h3 {
 
 .toolbar-selects {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -675,6 +676,7 @@ h3 {
 
 .list-meta {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 14px 28px;
@@ -684,6 +686,11 @@ h3 {
   font-size: 12px;
   font-weight: 820;
   text-transform: uppercase;
+}
+
+.sort-note {
+  margin-left: auto;
+  color: #403d37;
 }
 
 .text-button {
