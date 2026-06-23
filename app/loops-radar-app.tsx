@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Loop } from "@/lib/loops";
-import { categories, loopSourceCount, statuses } from "@/lib/loops";
+import { categories, loopSourceCount, sourceNames, statuses } from "@/lib/loops";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -52,6 +52,7 @@ export function LoopsRadarApp({ loops }: Props) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [status, setStatus] = useState("All");
+  const [source, setSource] = useState("All");
   const [selectedId, setSelectedId] = useState(loops[0]?.id || "");
   const [submissionType, setSubmissionType] = useState("submit-loop");
   const [formStatus, setFormStatus] = useState<Status>("idle");
@@ -65,6 +66,7 @@ export function LoopsRadarApp({ loops }: Props) {
     return loops.filter((loop) => {
       const matchesCategory = category === "All" || loop.category === category;
       const matchesStatus = status === "All" || loop.status === status;
+      const matchesSource = source === "All" || loop.sourceName === source;
       const haystack = [
         loop.name,
         loop.summary,
@@ -84,10 +86,11 @@ export function LoopsRadarApp({ loops }: Props) {
       return (
         matchesCategory &&
         matchesStatus &&
+        matchesSource &&
         (!normalizedQuery || haystack.includes(normalizedQuery))
       );
     });
-  }, [category, loops, query, status]);
+  }, [category, loops, query, source, status]);
 
   const pageCount = Math.max(1, Math.ceil(filteredLoops.length / pageSize));
   const currentPage = Math.min(page, pageCount);
@@ -97,7 +100,7 @@ export function LoopsRadarApp({ loops }: Props) {
 
   useEffect(() => {
     setPage(1);
-  }, [category, query, status]);
+  }, [category, query, source, status]);
 
   const selectedLoop =
     filteredLoops.find((loop) => loop.id === selectedId) || filteredLoops[0] || loops[0];
@@ -236,17 +239,32 @@ export function LoopsRadarApp({ loops }: Props) {
                 placeholder="Search loops..."
               />
             </label>
-            <div className="filter-group" aria-label="Category filters">
-              {["All", ...categories].map((item) => (
-                <button
-                  className={category === item ? "pill active" : "pill"}
-                  key={item}
-                  onClick={() => setCategory(item)}
-                  type="button"
+            <div className="toolbar-selects" aria-label="Catalog filters">
+              <label className="select-control">
+                <span>Collection</span>
+                <select
+                  value={category}
+                  onChange={(event) => setCategory(event.target.value)}
                 >
-                  {item}
-                </button>
-              ))}
+                  <option value="All">All collections</option>
+                  {categories.map((item) => (
+                    <option value={item} key={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="select-control">
+                <span>Source</span>
+                <select value={source} onChange={(event) => setSource(event.target.value)}>
+                  <option value="All">All sources</option>
+                  {sourceNames.map((item) => (
+                    <option value={item} key={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
           </div>
 
@@ -257,13 +275,14 @@ export function LoopsRadarApp({ loops }: Props) {
                 ? ` / showing ${pageStart + 1}-${pageEnd}`
                 : ""}
             </span>
-            {(query || category !== "All" || status !== "All") && (
+            {(query || category !== "All" || status !== "All" || source !== "All") && (
               <button
                 className="text-button"
                 onClick={() => {
                   setQuery("");
                   setCategory("All");
                   setStatus("All");
+                  setSource("All");
                   setPage(1);
                 }}
                 type="button"
@@ -360,10 +379,14 @@ export function LoopsRadarApp({ loops }: Props) {
 
             <p>{selectedLoop.whyUseful}</p>
 
-            <div className="detail-card">
+            <div className="detail-meta-strip" aria-label="Selected loop metadata">
               <span className={`status status-${selectedLoop.status}`}>
                 {selectedLoop.status}
               </span>
+              <span>{selectedLoop.cadence}</span>
+            </div>
+
+            <div className="verifier-panel">
               <h3>Verifier</h3>
               <p>{selectedLoop.verifier}</p>
             </div>
@@ -395,10 +418,6 @@ export function LoopsRadarApp({ loops }: Props) {
               </ul>
             </div>
 
-            <div className="mini-meta">
-              <span>Cadence</span>
-              <strong>{selectedLoop.cadence}</strong>
-            </div>
             <div className="mini-meta">
               <span>Source</span>
               <a href={selectedLoop.sourceUrl}>
