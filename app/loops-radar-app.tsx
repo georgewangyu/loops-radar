@@ -193,7 +193,6 @@ export function LoopsRadarApp({ loops }: Props) {
   const [error, setError] = useState("");
   const [copied, setCopied] = useState("");
   const [page, setPage] = useState(1);
-  const [quickSubmitOpen, setQuickSubmitOpen] = useState(false);
   const sourceOrder = useMemo(
     () => new Map(sourceNames.map((sourceName, index) => [sourceName, index])),
     [],
@@ -459,68 +458,10 @@ export function LoopsRadarApp({ loops }: Props) {
               </p>
             </div>
             <div className="quick-submit-actions">
-              <button
-                className="primary"
-                onClick={() => setQuickSubmitOpen((value) => !value)}
-                type="button"
-              >
-                {quickSubmitOpen ? "Close quick form" : "Open quick form"}
-              </button>
-              <a className="text-button" href="#submit">
-                Full form
+              <a className="primary" href="#submit">
+                Go to full form
               </a>
             </div>
-            {quickSubmitOpen ? (
-              <form className="quick-submit-form" onSubmit={onSubmit}>
-                <input name="submissionType" type="hidden" value="submit-loop" />
-                <input name="visibility" type="hidden" value="public" />
-                <input className="trap" name="website" tabIndex={-1} autoComplete="off" />
-                <label>
-                  <span>Title</span>
-                  <input
-                    name="title"
-                    placeholder="A repeatable workflow name"
-                    minLength={4}
-                    maxLength={120}
-                    required
-                  />
-                </label>
-                <label>
-                  <span>Outcome</span>
-                  <textarea
-                    name="outcome"
-                    placeholder="What does this help someone do?"
-                    minLength={10}
-                    maxLength={1200}
-                    required
-                  />
-                </label>
-                <label>
-                  <span>Steps</span>
-                  <textarea
-                    name="steps"
-                    placeholder="Paste the rough loop shape..."
-                    minLength={10}
-                    maxLength={2500}
-                    required
-                  />
-                </label>
-                <label>
-                  <span>Link or context</span>
-                  <input name="context" placeholder="Optional repo, post, or note" />
-                </label>
-                <input name="handle" type="hidden" value="" />
-                <button disabled={formStatus === "submitting"} type="submit">
-                  {formStatus === "submitting" ? "Sending..." : "Create issue"}
-                </button>
-                {formStatus === "success" ? (
-                  <div className="notice success">Submission sent.</div>
-                ) : null}
-                {formStatus === "error" ? (
-                  <div className="notice error">{error}</div>
-                ) : null}
-              </form>
-            ) : null}
           </section>
 
           <div className="list-meta">

@@ -163,33 +163,16 @@ test.describe("Loops Radar catalog", () => {
     expect(payloads[0]?.submissionType).toBe("submit-loop");
   });
 
-  test("quick submit form is available near the catalog", async ({ page }) => {
-    const payloads: Array<Record<string, unknown>> = [];
-
-    await page.route("**/api/submit", async (route) => {
-      payloads.push(JSON.parse(route.request().postData() || "{}") as Record<string, unknown>);
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ ok: true, issueNumber: 43 }),
-      });
-    });
-
+  test("contribution card links to the full submit form", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Open quick form" }).click();
-    const quickForm = page.locator(".quick-submit-form");
-    await quickForm.getByLabel("Title").fill("Quick catalog loop");
-    await quickForm
-      .getByLabel("Outcome")
-      .fill("It lets visitors submit a loop without reaching the footer.");
-    await quickForm
-      .getByLabel("Steps")
-      .fill("Open quick form, describe the loop, submit it as a public issue.");
-    await quickForm.getByRole("button", { name: "Create issue" }).click();
 
-    await expect(page.getByText("Submission sent.").first()).toBeVisible();
-    expect(payloads[0]?.visibility).toBe("public");
-    expect(payloads[0]?.submissionType).toBe("submit-loop");
+    await expect(page.getByRole("button", { name: "Open quick form" })).toHaveCount(0);
+    await expect(page.locator(".quick-submit-form")).toHaveCount(0);
+    await page.getByRole("link", { name: "Go to full form" }).click();
+
+    await expect(page).toHaveURL(/#submit$/);
+    await expect(page.getByRole("heading", { name: "Submit to Loops Radar" })).toBeVisible();
+    await expect(page.getByLabel("Loop title")).toBeVisible();
   });
 
   test("mobile layout has no horizontal overflow", async ({ page }) => {
