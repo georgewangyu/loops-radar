@@ -22,7 +22,7 @@ const submissionTypes = [
   ["improve-loop", "Improve loop"],
 ] as const;
 
-const pageSize = 24;
+const pageSize = 12;
 
 const issueLabels: Record<string, string> = {
   title: "Loop title",
@@ -59,6 +59,7 @@ export function LoopsRadarApp({ loops }: Props) {
   const [error, setError] = useState("");
   const [copied, setCopied] = useState("");
   const [page, setPage] = useState(1);
+  const [quickSubmitOpen, setQuickSubmitOpen] = useState(false);
 
   const filteredLoops = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -124,7 +125,7 @@ export function LoopsRadarApp({ loops }: Props) {
 
     const form = new FormData(formElement);
     const payload = {
-      submissionType,
+      submissionType: String(form.get("submissionType") || submissionType),
       visibility: String(form.get("visibility") || "public"),
       title: String(form.get("title") || ""),
       outcome: String(form.get("outcome") || ""),
@@ -267,6 +268,80 @@ export function LoopsRadarApp({ loops }: Props) {
               </label>
             </div>
           </div>
+
+          <section className="quick-submit" aria-label="Quick loop submission">
+            <div>
+              <p className="eyebrow">Contribute</p>
+              <h2>Missing a loop?</h2>
+              <p>
+                Send a rough workflow from here without scrolling to the full
+                request form.
+              </p>
+            </div>
+            <div className="quick-submit-actions">
+              <button
+                className="primary"
+                onClick={() => setQuickSubmitOpen((value) => !value)}
+                type="button"
+              >
+                {quickSubmitOpen ? "Close quick form" : "Open quick form"}
+              </button>
+              <a className="text-button" href="#submit">
+                Full form
+              </a>
+            </div>
+            {quickSubmitOpen ? (
+              <form className="quick-submit-form" onSubmit={onSubmit}>
+                <input name="submissionType" type="hidden" value="submit-loop" />
+                <input name="visibility" type="hidden" value="public" />
+                <input className="trap" name="website" tabIndex={-1} autoComplete="off" />
+                <label>
+                  <span>Title</span>
+                  <input
+                    name="title"
+                    placeholder="A repeatable workflow name"
+                    minLength={4}
+                    maxLength={120}
+                    required
+                  />
+                </label>
+                <label>
+                  <span>Outcome</span>
+                  <textarea
+                    name="outcome"
+                    placeholder="What does this help someone do?"
+                    minLength={10}
+                    maxLength={1200}
+                    required
+                  />
+                </label>
+                <label>
+                  <span>Steps</span>
+                  <textarea
+                    name="steps"
+                    placeholder="Paste the rough loop shape..."
+                    minLength={10}
+                    maxLength={2500}
+                    required
+                  />
+                </label>
+                <label>
+                  <span>Link or context</span>
+                  <input name="context" placeholder="Optional repo, post, or note" />
+                </label>
+                <input name="handle" type="hidden" value="" />
+                <button disabled={formStatus === "submitting"} type="submit">
+                  {formStatus === "submitting" ? "Sending..." : "Create issue"}
+                </button>
+                {formStatus === "success" ? (
+                  <div className="notice success">Submission sent.</div>
+                ) : null}
+                {formStatus === "error" ? (
+                  <div className="notice error">{error}</div>
+                ) : null}
+              </form>
+            ) : null}
+          </section>
 
           <div className="list-meta">
             <span>

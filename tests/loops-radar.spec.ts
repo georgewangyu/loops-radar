@@ -31,7 +31,7 @@ test.describe("Loops Radar catalog", () => {
     await expect(page.getByRole("heading", { name: "Loops Radar", level: 1 })).toBeVisible();
     await expect(page.getByText("public markdown sources")).toBeVisible();
     await expect(page.getByText(`${loops.length} matching loops`)).toBeVisible();
-    await expect(page.getByText("showing 1-24")).toBeVisible();
+    await expect(page.getByText("showing 1-12")).toBeVisible();
 
     await page.getByPlaceholder("Search loops...").fill("wono_strategy");
     await expect(
@@ -63,12 +63,12 @@ test.describe("Loops Radar catalog", () => {
   test("pagination moves through the catalog and resets for search", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByText(`Page 1 of ${Math.ceil(loops.length / 24)}`)).toBeVisible();
+    await expect(page.getByText(`Page 1 of ${Math.ceil(loops.length / 12)}`)).toBeVisible();
     await expect(page.getByRole("button", { name: "Previous" })).toBeDisabled();
 
     await page.getByRole("button", { name: "Next" }).click();
     await expect(page.getByText("Page 2 of")).toBeVisible();
-    await expect(page.getByText("showing 25-48")).toBeVisible();
+    await expect(page.getByText("showing 13-24")).toBeVisible();
     await expect(page.getByRole("button", { name: "Previous" })).toBeEnabled();
 
     await page.getByPlaceholder("Search loops...").fill("wono_strategy");
@@ -121,6 +121,35 @@ test.describe("Loops Radar catalog", () => {
     await page.getByRole("button", { name: "Create issue" }).click();
 
     await expect(page.getByText("Submission sent.")).toBeVisible();
+    expect(payloads[0]?.visibility).toBe("public");
+    expect(payloads[0]?.submissionType).toBe("submit-loop");
+  });
+
+  test("quick submit form is available near the catalog", async ({ page }) => {
+    const payloads: Array<Record<string, unknown>> = [];
+
+    await page.route("**/api/submit", async (route) => {
+      payloads.push(JSON.parse(route.request().postData() || "{}") as Record<string, unknown>);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true, issueNumber: 43 }),
+      });
+    });
+
+    await page.goto("/");
+    await page.getByRole("button", { name: "Open quick form" }).click();
+    const quickForm = page.locator(".quick-submit-form");
+    await quickForm.getByLabel("Title").fill("Quick catalog loop");
+    await quickForm
+      .getByLabel("Outcome")
+      .fill("It lets visitors submit a loop without reaching the footer.");
+    await quickForm
+      .getByLabel("Steps")
+      .fill("Open quick form, describe the loop, submit it as a public issue.");
+    await quickForm.getByRole("button", { name: "Create issue" }).click();
+
+    await expect(page.getByText("Submission sent.").first()).toBeVisible();
     expect(payloads[0]?.visibility).toBe("public");
     expect(payloads[0]?.submissionType).toBe("submit-loop");
   });

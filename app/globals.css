@@ -365,6 +365,98 @@ h3 {
   box-shadow: 0 0 0 4px rgba(20, 87, 255, 0.12);
 }
 
+.quick-submit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+  margin-bottom: 16px;
+  border: 1px solid #d8d1c4;
+  border-radius: 16px;
+  background: #fffdf8;
+  padding: 16px;
+}
+
+.quick-submit h2 {
+  margin-bottom: 6px;
+  font-size: 22px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.quick-submit p {
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.quick-submit-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quick-submit-form {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  border-top: 1px solid #e5ded4;
+  padding-top: 14px;
+}
+
+.quick-submit-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.quick-submit-form label:nth-of-type(2),
+.quick-submit-form label:nth-of-type(3) {
+  grid-column: 1 / -1;
+}
+
+.quick-submit-form span {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 820;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.quick-submit-form input,
+.quick-submit-form textarea {
+  width: 100%;
+  border: 1px solid #cbc4b6;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ink);
+  padding: 11px 12px;
+  outline: none;
+}
+
+.quick-submit-form textarea {
+  min-height: 86px;
+  resize: vertical;
+}
+
+.quick-submit-form input:focus,
+.quick-submit-form textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(20, 87, 255, 0.12);
+}
+
+.quick-submit-form button {
+  justify-self: start;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 820;
+}
+
 .product-table {
   border: 1px solid #dce2df;
   border-radius: 16px;
@@ -986,6 +1078,20 @@ li {
 
   .toolbar-selects {
     grid-template-columns: 1fr;
+  }
+
+  .quick-submit,
+  .quick-submit-form {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-submit-actions {
+    justify-content: flex-start;
+  }
+
+  .quick-submit-form label:nth-of-type(2),
+  .quick-submit-form label:nth-of-type(3) {
+    grid-column: auto;
   }
 }
 
