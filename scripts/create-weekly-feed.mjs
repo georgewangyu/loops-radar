@@ -185,6 +185,17 @@ to my current work, summarize why they matter, and adapt the source markdown
 into the next concrete goal or workflow.
 \`\`\`
 
+## Daily Outlook Prompt
+
+For a lightweight morning recommendation, ask:
+
+\`\`\`text
+Use Loops Radar and give me Recommended today. Keep it compact:
+1 primary goal, 1 maintenance loop, and 1 content or research loop.
+Use the latest weekly feed first, then adapt to my current work if you have
+enough context.
+\`\`\`
+
 ## Builder Takeaways
 
 - Use: pick one loop from the weekly feed for the next work session.

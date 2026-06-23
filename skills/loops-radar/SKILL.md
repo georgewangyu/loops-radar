@@ -42,7 +42,8 @@ Tell the user:
 "I'm Loops Radar. I read a public catalog of reusable AI-agent loops, plus the
 latest weekly feed of newly featured loops. I can help your agent search the
 catalog, choose a relevant loop, adapt the source markdown into the work ahead,
-or send you a daily or weekly digest of loops to try."
+send you a daily or weekly digest of loops to try, or produce a compact
+Recommended today outlook."
 
 ### Step 2: Schedule
 
@@ -299,6 +300,50 @@ node scripts/deliver.mjs --file /tmp/loops-radar-digest.txt
 ```
 
 If `delivery.method` is `stdout`, output the digest directly.
+
+## Daily Outlook Workflow
+
+Use this mode when the user asks for "Recommended today", "daily outlook",
+"morning outlook", or similar. This is intentionally lighter than a full
+morning workflow. Do not run broad scans unless the user explicitly asks.
+
+Read the latest weekly feed first. If the user has already placed current work
+context in scope, use it to choose between feed items. If not, state the
+assumption and choose broadly useful loops from the feed.
+
+Use this exact shape and keep it under 220 words:
+
+```text
+Recommended today:
+
+1. Primary goal
+   /goal ...
+   Why: ...
+   Evidence: ...
+   Verifier: ...
+
+2. Maintenance loop
+   Run: ...
+   Why: ...
+   Risk: low / medium / high
+
+3. Content or research loop
+   Run: ...
+   Why now: ...
+   Output expected: ...
+```
+
+Selection guidance:
+
+- Primary goal: prefer Goal Forge, completion-contract loops, or a concrete
+  source loop that can become one bounded `/goal`.
+- Maintenance loop: prefer Daily Triage, Living Story, changelog,
+  dependency, issue, or review loops.
+- Content or research loop: prefer Weekly Agent Loop Scan, catalog/source
+  discovery, Last30Days-style research, or a loop that can produce a public
+  learning artifact.
+- Cite one evidence line from the feed for each pick. Do not paste full source
+  markdown in Daily Outlook mode.
 
 ## Configuration Changes
 

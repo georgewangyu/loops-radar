@@ -34,6 +34,7 @@ test.describe("Loops Radar catalog", () => {
       page.getByRole("heading", { name: "Use Loops Radar in your coding agent.", level: 2 }),
     ).toBeVisible();
     await expect(page.getByText("daily or weekly loop digests")).toBeVisible();
+    await expect(page.getByText("Recommended today")).toBeVisible();
     await expect(page.getByText("npx skills add georgewangyu/loops-radar")).toBeVisible();
     await expect(page.getByText(`${loops.length} matching loops`)).toBeVisible();
     await expect(page.getByText("showing 1-12")).toBeVisible();

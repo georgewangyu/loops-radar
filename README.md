@@ -17,6 +17,8 @@ Live site: https://loops-radar.vercel.app
 - Copyable source markdown from public source repos.
 - Weekly feed of newly added or featured loops.
 - Daily rotation pulled from the latest weekly feed.
+- Lightweight `Recommended today` outlook with one primary goal, one
+  maintenance loop, and one content or research loop.
 - Agent skill for selecting, adapting, and summarizing loops.
 - Public contribution form, with private review available for rough ideas.
 
@@ -122,6 +124,7 @@ Just tell your agent:
 
 - "Switch to weekly digests on Monday mornings"
 - "Switch to daily loop picks"
+- "Give me Recommended today"
 - "Change language to bilingual"
 - "Send this to Telegram instead"
 - "Make the digest shorter"
@@ -188,6 +191,34 @@ Read the newest feed:
 ```sh
 npm run --silent feed:latest
 ```
+
+## Daily Outlook
+
+The installed skill supports a compact morning-style recommendation:
+
+```text
+Recommended today:
+
+1. Primary goal
+   /goal ...
+   Why: ...
+   Evidence: ...
+   Verifier: ...
+
+2. Maintenance loop
+   Run: ...
+   Why: ...
+   Risk: low / medium / high
+
+3. Content or research loop
+   Run: ...
+   Why now: ...
+   Output expected: ...
+```
+
+This mode intentionally stays small. It reads the latest weekly feed first,
+then adapts the choices to the current work only when the user or local agent
+has already placed that context in scope.
 
 ## Local Development
 
