@@ -153,7 +153,7 @@ Updated after the Loops Radar weekly source sync.
 
 ${featured
   .map(
-    (loop) => `- [${loop.name}](https://loops-radar.vercel.app/loops/${loop.id})
+    (loop) => `- [${loop.name}](https://loopsradar.snackoverflowgeorge.com/loops/${loop.id})
   - Source: ${loop.sourceName} / ${loop.sourceRepo}
   - Category: ${loop.category}
   - Status: ${loop.status}
@@ -170,7 +170,7 @@ ${rotation
   .filter((entry) => entry.loops.length > 0)
   .map(
     (entry) => `- ${entry.day}: ${entry.loops
-      .map((loop) => `[${loop.name}](https://loops-radar.vercel.app/loops/${loop.id})`)
+      .map((loop) => `[${loop.name}](https://loopsradar.snackoverflowgeorge.com/loops/${loop.id})`)
       .join(" + ")}`,
   )
   .join("\n")}

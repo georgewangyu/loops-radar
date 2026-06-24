@@ -11,7 +11,7 @@ featured loops.
 
 ## Catalog
 
-- Website: https://loops-radar.vercel.app
+- Website: https://loopsradar.snackoverflowgeorge.com
 - Public repo: https://github.com/georgewangyu/loops-radar
 - Weekly feeds: `feeds/YYYY/MM/YYYY-MM-DD.md`
 

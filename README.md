@@ -9,7 +9,7 @@ markdown. The installed skill lets an agent search the catalog, adapt a loop to
 the work ahead, and deliver a daily or weekly digest from the public weekly
 feed.
 
-Live site: https://loops-radar.vercel.app
+Live site: https://loopsradar.snackoverflowgeorge.com
 
 ## What You Get
 
