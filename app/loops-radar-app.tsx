@@ -43,6 +43,16 @@ const issueLabels: Record<string, string> = {
 
 const skillInstallCommand = "npx skills add georgewangyu/loops-radar --skill loops-radar -g";
 
+const creatorLinks = [
+  ["GitHub", "https://github.com/georgewangyu"],
+  ["X", "https://x.com/georgewangyu"],
+  ["Email", "mailto:hellogeorgehq@gmail.com"],
+  ["Instagram", "https://www.instagram.com/snackoverflowgeorge/"],
+  ["TikTok", "https://www.tiktok.com/@snackoverflowgeorge"],
+  ["YouTube", "https://www.youtube.com/@snackoverflowgeorge"],
+  ["LinkedIn", "https://www.linkedin.com/in/georgewangyu/"],
+] as const;
+
 const featuredLoopIds = new Set([
   "refactor-until-architecture-settles",
   "weekly-agent-loop-scan",
@@ -321,6 +331,13 @@ export function LoopsRadarApp({ loops }: Props) {
             content, coding, and personal ops. Open a loop, copy the recipe, or
             submit an improvement.
           </p>
+          <nav className="creator-links" aria-label="George links">
+            {creatorLinks.map(([label, href]) => (
+              <a href={href} key={label}>
+                {label}
+              </a>
+            ))}
+          </nav>
         </div>
         <aside className="hero-note">
           <strong>{loops.length} loops loaded</strong>

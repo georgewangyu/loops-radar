@@ -36,6 +36,14 @@ test.describe("Loops Radar catalog", () => {
     await expect(page.getByText("daily or weekly loop digests")).toBeVisible();
     await expect(page.getByText("Recommended today")).toBeVisible();
     await expect(page.getByText("npx skills add georgewangyu/loops-radar")).toBeVisible();
+    await expect(page.getByLabel("George links").getByRole("link", { name: "Email" })).toHaveAttribute(
+      "href",
+      "mailto:hellogeorgehq@gmail.com",
+    );
+    await expect(page.getByLabel("George links").getByRole("link", { name: "Instagram" })).toHaveAttribute(
+      "href",
+      "https://www.instagram.com/snackoverflowgeorge/",
+    );
     await expect(page.getByText(`${loops.length} matching loops`)).toBeVisible();
     await expect(page.getByText("showing 1-12")).toBeVisible();
     await expect(page.getByLabel("Sort")).toHaveValue("balanced");
