@@ -331,13 +331,16 @@ export function LoopsRadarApp({ loops }: Props) {
             content, coding, and personal ops. Open a loop, copy the recipe, or
             submit an improvement.
           </p>
-          <nav className="creator-links" aria-label="George links">
-            {creatorLinks.map(([label, href]) => (
-              <a href={href} key={label}>
-                {label}
-              </a>
-            ))}
-          </nav>
+          <div className="creator-links-block">
+            <p className="creator-links-title">Created by George</p>
+            <nav className="creator-links" aria-label="George links">
+              {creatorLinks.map(([label, href]) => (
+                <a href={href} key={label}>
+                  {label}
+                </a>
+              ))}
+            </nav>
+          </div>
         </div>
         <aside className="hero-note">
           <strong>{loops.length} loops loaded</strong>

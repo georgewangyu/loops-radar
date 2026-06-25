@@ -36,6 +36,7 @@ test.describe("Loops Radar catalog", () => {
     await expect(page.getByText("daily or weekly loop digests")).toBeVisible();
     await expect(page.getByText("Recommended today")).toBeVisible();
     await expect(page.getByText("npx skills add georgewangyu/loops-radar")).toBeVisible();
+    await expect(page.getByText("Created by George")).toBeVisible();
     await expect(page.getByLabel("George links").getByRole("link", { name: "Email" })).toHaveAttribute(
       "href",
       "mailto:hellogeorgehq@gmail.com",
