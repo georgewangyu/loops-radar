@@ -280,9 +280,13 @@ Required environment variables:
 ```sh
 GITHUB_TOKEN=<server-side-github-token>
 GITHUB_OWNER=your-github-owner
-GITHUB_REPO=loops-radar-public
-GITHUB_PRIVATE_REPO=loops-radar-private-intake
+GITHUB_REPO=loops-radar
+GITHUB_PRIVATE_REPO=<private-intake-repo>
 ```
+
+Public submissions create issues in `GITHUB_OWNER/GITHUB_REPO`. Private
+submissions create issues in `GITHUB_OWNER/GITHUB_PRIVATE_REPO`; this must be an
+existing private repo with Issues enabled and token access configured.
 
 Optional:
 
