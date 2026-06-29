@@ -35,7 +35,7 @@ test.describe("Loops Radar catalog", () => {
     ).toBeVisible();
     await expect(page.getByText("daily or weekly loop digests")).toBeVisible();
     await expect(page.getByText("Recommended today")).toBeVisible();
-    await expect(page.getByText("npx skills add georgewangyu/loops-radar")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Unlock install command" })).toBeVisible();
     await expect(page.getByText("Created by George")).toBeVisible();
     await expect(page.getByLabel("George links").getByRole("link", { name: "Email" })).toHaveAttribute(
       "href",
@@ -133,7 +133,22 @@ test.describe("Loops Radar catalog", () => {
 
   test("setup command copies from the agent skill card", async ({ page, context }) => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.route("**/api/leads", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true }),
+      });
+    });
     await page.goto("/");
+
+    await page.getByLabel("Name").fill("George Test");
+    await page.getByLabel("Email").fill("george@example.com");
+    await page.getByRole("button", { name: "Unlock install command" }).click();
+    await expect(page.getByRole("link", { name: "Star the repo" })).toHaveAttribute(
+      "href",
+      "https://github.com/georgewangyu/loops-radar",
+    );
 
     await page.getByRole("button", { name: "Copy command" }).click();
     await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
@@ -167,7 +182,9 @@ test.describe("Loops Radar catalog", () => {
     await page
       .getByLabel("Rough steps")
       .fill("Open the app, use filters, open a loop page, submit a mocked issue, and check mobile.");
-    await page.getByRole("button", { name: "Create issue" }).click();
+    const createIssue = page.getByRole("button", { name: "Create issue" });
+    await createIssue.scrollIntoViewIfNeeded();
+    await createIssue.click();
 
     await expect(page.getByText("Submission sent.")).toBeVisible();
     expect(payloads[0]?.visibility).toBe("public");

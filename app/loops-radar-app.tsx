@@ -42,6 +42,8 @@ const issueLabels: Record<string, string> = {
 };
 
 const skillInstallCommand = "npx skills add georgewangyu/loops-radar --skill loops-radar -g";
+const skillRepoUrl = "https://github.com/georgewangyu/loops-radar";
+const leadStorageKey = "loops-radar-install-unlocked";
 
 const creatorLinks = [
   ["GitHub", "https://github.com/georgewangyu"],
@@ -52,6 +54,11 @@ const creatorLinks = [
   ["YouTube", "https://www.youtube.com/@snackoverflowgeorge"],
   ["LinkedIn", "https://www.linkedin.com/in/georgewangyu/"],
 ] as const;
+
+const leadLabels: Record<string, string> = {
+  email: "Email",
+  name: "Name",
+};
 
 const featuredLoopIds = new Set([
   "refactor-until-architecture-settles",
@@ -88,6 +95,22 @@ async function errorMessageFor(response: Response) {
   return fieldMessages.length > 0
     ? fieldMessages.join(" ")
     : body?.error || "Please check the form and try again.";
+}
+
+async function leadErrorMessageFor(response: Response) {
+  if (response.status !== 400) {
+    return "Could not unlock the install command. Try again in a moment.";
+  }
+
+  const body = (await response.json().catch(() => null)) as ErrorResponse | null;
+  const fieldMessages = Object.entries(body?.issues || {}).flatMap(
+    ([field, messages]) =>
+      (messages || []).map((message) => `${leadLabels[field] || field}: ${message}`),
+  );
+
+  return fieldMessages.length > 0
+    ? fieldMessages.join(" ")
+    : body?.error || "Please check the fields and try again.";
 }
 
 function parseLoopDate(loop: Loop) {
@@ -200,7 +223,10 @@ export function LoopsRadarApp({ loops }: Props) {
   const [sortMode, setSortMode] = useState<SortMode>("balanced");
   const [submissionType, setSubmissionType] = useState("submit-loop");
   const [formStatus, setFormStatus] = useState<Status>("idle");
+  const [leadStatus, setLeadStatus] = useState<Status>("idle");
+  const [leadUnlocked, setLeadUnlocked] = useState(false);
   const [error, setError] = useState("");
+  const [leadError, setLeadError] = useState("");
   const [copied, setCopied] = useState("");
   const [page, setPage] = useState(1);
   const sourceOrder = useMemo(
@@ -254,6 +280,10 @@ export function LoopsRadarApp({ loops }: Props) {
     setPage(1);
   }, [category, query, source, sortMode, status]);
 
+  useEffect(() => {
+    setLeadUnlocked(window.localStorage.getItem(leadStorageKey) === "true");
+  }, []);
+
   async function copyLoop(loop: Loop) {
     await navigator.clipboard.writeText(loop.markdown);
     setCopied(loop.id);
@@ -264,6 +294,41 @@ export function LoopsRadarApp({ loops }: Props) {
     await navigator.clipboard.writeText(skillInstallCommand);
     setCopied("setup-command");
     window.setTimeout(() => setCopied(""), 1400);
+  }
+
+  async function onLeadSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formElement = event.currentTarget;
+    setLeadStatus("submitting");
+    setLeadError("");
+
+    const form = new FormData(formElement);
+    const payload = {
+      email: String(form.get("email") || ""),
+      name: String(form.get("name") || ""),
+      website: String(form.get("website") || ""),
+    };
+
+    try {
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        setLeadStatus("error");
+        setLeadError(await leadErrorMessageFor(response));
+        return;
+      }
+
+      window.localStorage.setItem(leadStorageKey, "true");
+      setLeadUnlocked(true);
+      setLeadStatus("success");
+    } catch {
+      setLeadStatus("error");
+      setLeadError("Could not unlock the install command. Try again in a moment.");
+    }
   }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -362,17 +427,53 @@ export function LoopsRadarApp({ loops }: Props) {
             Ask for "Recommended today" when you want a compact daily outlook.
           </p>
         </div>
-        <div className="setup-command">
-          <code>{skillInstallCommand}</code>
-          <div className="setup-actions">
-            <button onClick={copySetupCommand} type="button">
-              {copied === "setup-command" ? "Copied" : "Copy command"}
-            </button>
-            <a href="https://github.com/georgewangyu/loops-radar">
-              View repository
-            </a>
+        {leadUnlocked ? (
+          <div className="setup-command" aria-live="polite">
+            <code>{skillInstallCommand}</code>
+            <div className="setup-actions">
+              <button onClick={copySetupCommand} type="button">
+                {copied === "setup-command" ? "Copied" : "Copy command"}
+              </button>
+              <a href={skillRepoUrl}>Star the repo</a>
+              <a href="#catalog">Browse loops</a>
+            </div>
+            <p className="setup-support">
+              Star Loops Radar to save it and support the project.
+            </p>
           </div>
-        </div>
+        ) : (
+          <form className="unlock-form" onSubmit={onLeadSubmit}>
+            <input className="trap" name="website" tabIndex={-1} autoComplete="off" />
+            <label>
+              <span>Name</span>
+              <input
+                name="name"
+                autoComplete="name"
+                placeholder="Your name"
+                required
+              />
+            </label>
+            <label>
+              <span>Email</span>
+              <input
+                name="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                required
+                type="email"
+              />
+            </label>
+            <button disabled={leadStatus === "submitting"} type="submit">
+              {leadStatus === "submitting" ? "Unlocking..." : "Unlock install command"}
+            </button>
+            <p className="unlock-note">
+              Unlocks the skill command and occasional Radar updates. No spam.
+            </p>
+            {leadStatus === "error" ? (
+              <div className="notice error">{leadError}</div>
+            ) : null}
+          </form>
+        )}
       </section>
 
       <section className="product-grid" id="catalog" aria-label="Loops catalog">

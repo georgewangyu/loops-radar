@@ -88,6 +88,28 @@ Node.js 20+ is only needed for scheduled non-OpenClaw Telegram/email delivery
 through the included scripts. Chat-only use does not require installing npm
 packages.
 
+## Website Lead Capture
+
+The homepage install card asks for name and email before revealing the copyable
+install command. Submissions are saved server-side into a shared Supabase table
+called `radar_leads`; no Supabase key is exposed to the browser.
+
+Create the table in the Supabase SQL editor, or with `psql`:
+
+```sh
+psql "$SUPABASE_DB_URL" -f docs/radar-leads-supabase.sql
+```
+
+Then configure the deployment with:
+
+```env
+SUPABASE_URL=https://<project-ref>.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=<server-side-service-role-key>
+```
+
+`radar_leads` upserts by `(product, email)`, so repeated unlocks update the
+same contact instead of creating noisy duplicates.
+
 ## Delivery Options
 
 ### OpenClaw
@@ -279,14 +301,15 @@ Required environment variables:
 
 ```sh
 GITHUB_TOKEN=<server-side-github-token>
-GITHUB_OWNER=your-github-owner
-GITHUB_REPO=loops-radar
-GITHUB_PRIVATE_REPO=<private-intake-repo>
+GITHUB_OWNER=georgewangyu
+GITHUB_REPO=audience-request-form
+GITHUB_PRIVATE_REPO=audience-private-intake
 ```
 
-Public submissions create issues in `GITHUB_OWNER/GITHUB_REPO`. Private
-submissions create issues in `GITHUB_OWNER/GITHUB_PRIVATE_REPO`; this must be an
-existing private repo with Issues enabled and token access configured.
+Public submissions create issues in `georgewangyu/audience-request-form`.
+Private submissions create issues in `georgewangyu/audience-private-intake`.
+Loops Radar adds `loops-radar` and `source-repo:loops-radar` labels so the
+shared queue remains triageable.
 
 Optional:
 
@@ -295,5 +318,5 @@ GITHUB_API_VERSION=2022-11-28
 LOOPS_REQUEST_ALLOWED_ORIGIN=https://your-domain.example
 ```
 
-`GITHUB_TOKEN` must stay server-side and needs issue read/write access for the
-public and private target repos.
+`GITHUB_TOKEN` must stay server-side and needs issue read/write access for both
+shared audience intake repos.

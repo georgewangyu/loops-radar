@@ -1,5 +1,7 @@
 import type { LoopSubmission } from "./submission-schema";
 
+const sourceRepo = "loops-radar";
+
 const typeLabels: Record<LoopSubmission["submissionType"], string> = {
   "submit-loop": "type:submit-loop",
   "request-loop": "type:request-loop",
@@ -23,7 +25,8 @@ export function issueTitle(submission: LoopSubmission) {
 
 export function issueLabels(submission: LoopSubmission) {
   return [
-    "loops-radar",
+    sourceRepo,
+    `source-repo:${sourceRepo}`,
     "status:needs-triage",
     typeLabels[submission.submissionType],
     `visibility:${submission.visibility}`,
@@ -41,6 +44,7 @@ export function issueBody(submission: LoopSubmission) {
     "",
     `**Type:** ${typeTitles[submission.submissionType]}`,
     `**Visibility:** ${visibility}`,
+    `**Source repo:** ${sourceRepo}`,
     `**Handle:** ${handle}`,
     "",
     "## Title",
