@@ -1,6 +1,14 @@
 ---
 name: loops-radar
 description: Use when selecting, adapting, recommending, or digesting reusable AI-agent loops from the Loops Radar catalog.
+memory_tags:
+  - domain:agent-loops
+  - workflow:loop-recommendation
+  - skill_role:researcher
+  - repo_boundary:tools
+  - inputs:loop-catalog
+  - outputs:loop-digest
+  - risk:low
 ---
 
 # Loops Radar
