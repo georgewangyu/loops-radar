@@ -268,3 +268,17 @@ test.describe("Loop detail pages", () => {
     await expect(page.getByRole("heading", { name: "Submit to Loops Radar" })).toBeVisible();
   });
 });
+
+test.describe("Loops Radar feed pages", () => {
+  test("weekly feed page renders copyable markdown and receipts", async ({ page }) => {
+    await page.goto("/feeds/2026-06-27");
+
+    await expect(page).toHaveTitle("2026-06-27 | Loops Radar");
+    await expect(
+      page.getByRole("heading", { name: "Loops Radar Weekly Feed - 2026-06-27", level: 1 }),
+    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Copyable Feed Markdown", level: 2 })).toBeVisible();
+    await expect(page.locator(".markdown-recipe code")).toContainText("## Featured Loops");
+    await expect(page.getByRole("heading", { name: "Source Receipts", level: 2 })).toBeVisible();
+  });
+});

@@ -10,6 +10,7 @@
     "start": "next start",
     "sync:loops": "node scripts/sync-georgeloops.mjs",
     "sync:georgeloops": "node scripts/sync-georgeloops.mjs",
+    "validate:loops": "node scripts/sync-georgeloops.mjs --check",
     "typecheck": "tsc --noEmit",
     "test:ui": "playwright test"
   },

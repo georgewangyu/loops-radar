@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const SOURCE_CONFIG_PATH = path.join("sources", "loop-repos.json");
+const checkOnly = process.argv.includes("--check");
 
 const georgeCategoryById = {
   "daily-morning-routine": "Daily workflow",
@@ -624,8 +625,22 @@ async function main() {
     loops.push(...(await syncSource(source, usedIds)));
   }
 
+  const outputPath = path.join("lib", "loops.ts");
+  const generated = generatedModule(loops, sources.length);
+
+  if (checkOnly) {
+    const current = await readFile(outputPath, "utf8").catch(() => "");
+
+    if (current !== generated) {
+      throw new Error(`${outputPath} is out of date; run npm run sync:loops`);
+    }
+
+    console.log(`Validated ${loops.length} loop documents from ${sources.length} sources`);
+    return;
+  }
+
   await mkdir("lib", { recursive: true });
-  await writeFile(path.join("lib", "loops.ts"), generatedModule(loops, sources.length));
+  await writeFile(outputPath, generated);
   console.log(`Synced ${loops.length} loop documents from ${sources.length} sources`);
 }
 

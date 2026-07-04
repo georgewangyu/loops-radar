@@ -11,6 +11,8 @@ feed.
 
 Live site: https://loopsradar.snackoverflowgeorge.com
 
+Design contract: [DESIGN.md](DESIGN.md)
+
 ## What You Get
 
 - Searchable public catalog of reusable loops.
@@ -265,6 +267,7 @@ Open `http://localhost:4189`.
 ```sh
 npm run feed:weekly
 npm run --silent feed:latest
+npm run validate:loops
 npm run typecheck
 npm run build
 npm run test:ui
