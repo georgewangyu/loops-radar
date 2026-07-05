@@ -14,22 +14,17 @@
     ]
   },
   {
-    "repo": "Forward-Future/loop-library",
+    "repo": "Forward-Future/loopy",
     "branch": "main",
-    "label": "Forward Future Loop Library",
-    "category": "Loop catalog",
+    "label": "Forward Future Loopy",
+    "category": "Loop design workflows",
     "defaultStatus": "external",
     "defaultCadence": "manual",
     "idPrefix": "forward-future",
-    "type": "forward-future-catalog",
-    "catalogUrl": "https://signals.forwardfuture.ai/loop-library/catalog.json",
-    "categoryBySlug": {
-      "engineering": "Engineering loops",
-      "evaluation": "Evaluation loops",
-      "operations": "Operations loops",
-      "content": "Content loops",
-      "design": "Design loops"
-    }
+    "include": [
+      "^skills/loopy/SKILL\\.md$",
+      "^skills/loopy/references/(audit|debrief|discover|publish|run)\\.md$"
+    ]
   },
   {
     "repo": "serenakeyitan/awesome-agent-loops",

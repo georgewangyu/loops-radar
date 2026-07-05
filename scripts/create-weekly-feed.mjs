@@ -93,7 +93,6 @@ function loopScore(loop) {
     }
   }
 
-  if (loop.sourceName === "Forward Future Loop Library") score += 3;
   if (loop.sourceName === "GeorgeLoops") score += 2;
   if (/goal|daily|loop pattern|engineering/i.test(loop.category)) score += 2;
 

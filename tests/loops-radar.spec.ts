@@ -236,8 +236,8 @@ test.describe("Loop detail pages", () => {
     const sourceNames = new Set(loops.map((loop) => loop.sourceName));
 
     expect(sourceNames.has("GeorgeLoops")).toBe(true);
-    expect(sourceNames.has("Forward Future Loop Library")).toBe(true);
     expect(sourceNames.has("Awesome Agent Loops")).toBe(true);
+    expect(sourceNames.has("ChaoYue Awesome Loop Engineering")).toBe(true);
     expect(sourceNames.has("Pi Pipelines")).toBe(true);
     expect(sourceNames.has("Anthropic Skills")).toBe(true);
     expect(sourceNames.has("Addy Osmani Agent Skills")).toBe(true);

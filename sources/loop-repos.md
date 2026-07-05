@@ -9,7 +9,7 @@ into the catalog, searched, opened, and copied as source markdown.
 | Source | Repo | Pattern | Why it is included |
 | --- | --- | --- | --- |
 | GeorgeLoops | `georgewangyu/GeorgeLoops` | `loops/*/LOOP.md`, `goals/*/GOAL.md` | Owned canonical loop and goal recipes. |
-| Forward Future Loop Library | `Forward-Future/loop-library` | published `catalog.json` | Loop-native catalog with structured prompts, verification, steps, and source links. |
+| Forward Future Loopy | `Forward-Future/loopy` | `skills/loopy/SKILL.md`, `skills/loopy/references/*.md` | Repo-backed Loopy workflows for loop discovery, audit, execution, debrief, and publishing preparation. |
 | Awesome Agent Loops | `serenakeyitan/awesome-agent-loops` | `README.md` command sections | Copyable `/loop`, `/goal`, and `/schedule` prompts split into individual loop cards. |
 | ChaoYue Awesome Loop Engineering | `ChaoYue0307/awesome-loop-engineering` | `examples/*-loop.json`, runnable loop markdown | Loop contracts and runnable examples for recurring AI-agent workflows. |
 | Cobus Loop Engineering | `cobusgreyling/loop-engineering` | 7 named `patterns/*.md` files | Production loop patterns for triage, PRs, CI, docs, dependencies, changelog, and cleanup. |
@@ -45,6 +45,9 @@ ranking/import rule first.
 - `K-Dense-AI/scientific-agent-skills`
 - `github/awesome-copilot`
 - `muratcankoylan/Agent-Skills-for-Context-Engineering`
+- Forward Future's live Loop Library catalog, until its published loop records
+  are checked into a GitHub repo as markdown/json/yaml source files. The live
+  website catalog is intentionally not an active sync source.
 
 ## Updating Sources
 
