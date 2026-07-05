@@ -112,6 +112,18 @@ SUPABASE_SERVICE_ROLE_KEY=<server-side-service-role-key>
 `radar_leads` upserts by `(product, email)`, so repeated unlocks update the
 same contact instead of creating noisy duplicates.
 
+### Radar Leads Keepalive
+
+The shared `radar-leads` Supabase project is on the Free plan and can be paused
+after low database activity. Loops Radar owns a daily Vercel Cron heartbeat at
+`/api/cron/radar-leads-heartbeat` that performs a read-only request against
+`public.radar_leads`. This keeps the shared lead-capture database warm for
+Books, Loops, Hooks, AI, Sports, and Builder Radar without inserting fake leads.
+
+Production must define `CRON_SECRET`, `SUPABASE_URL`, and
+`SUPABASE_SERVICE_ROLE_KEY`. Keep `/api/*` exempt from canonical-host redirects:
+Vercel Cron calls the production deployment URL and does not follow redirects.
+
 ## Delivery Options
 
 ### OpenClaw

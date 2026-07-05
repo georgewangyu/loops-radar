@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/cron/radar-leads-heartbeat",
+      "schedule": "17 15 * * *"
+    }
+  ],
   "redirects": [
     {
       "source": "/",
@@ -12,7 +18,7 @@
       "permanent": true
     },
     {
-      "source": "/:path*",
+      "source": "/:path((?!api/).*)",
       "has": [
         {
           "type": "host",

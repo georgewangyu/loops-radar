@@ -61,3 +61,31 @@ export async function saveRadarLead(input: SaveLeadInput) {
     throw new Error(`Supabase lead capture failed: ${response.status} ${body}`);
   }
 }
+
+export async function checkRadarLeadsHeartbeat() {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error("Missing Supabase lead capture environment configuration.");
+  }
+
+  const response = await fetch(
+    `${supabaseUrl.replace(/\/$/, "")}/rest/v1/radar_leads?select=product&limit=1`,
+    {
+      method: "GET",
+      headers: {
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
+      },
+      cache: "no-store",
+    },
+  );
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Supabase lead heartbeat failed: ${response.status} ${body}`);
+  }
+
+  return response.json() as Promise<Array<{ product: string }>>;
+}
