@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { BrandMark } from "./brand-mark";
 import type { Loop } from "@/lib/loops";
 import { categories, loopSourceCount, sourceNames, statuses } from "@/lib/loops";
 
@@ -375,7 +376,7 @@ export function LoopsRadarApp({ loops }: Props) {
     <main className="shell">
       <header className="topbar">
         <a className="brand" href="#">
-          <span className="mark">LR</span>
+          <BrandMark />
           <span>Loops Radar</span>
         </a>
         <nav className="nav-pills" aria-label="Page navigation">

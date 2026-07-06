@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BrandMark } from "@/app/brand-mark";
 import { getLoopById, loops } from "@/lib/loops";
 import { CopyMarkdownButton } from "./copy-markdown-button";
 
@@ -39,7 +40,7 @@ export default async function LoopPage({ params }: Props) {
     <main className="shell">
       <header className="topbar">
         <Link className="brand" href="/">
-          <span className="mark">LR</span>
+          <BrandMark />
           <span>Loops Radar</span>
         </Link>
         <nav className="nav-pills" aria-label="Loop page navigation">
