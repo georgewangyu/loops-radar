@@ -82,6 +82,18 @@
     ]
   },
   {
+    "repo": "davebcn87/pi-autoresearch",
+    "branch": "main",
+    "label": "Pi Autoresearch",
+    "category": "Experiment loops",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "pi-autoresearch",
+    "include": [
+      "^skills/autoresearch-(create|finalize|hooks)/SKILL\\.md$"
+    ]
+  },
+  {
     "repo": "rohanbalkondekar/agent-loop-patterns",
     "branch": "main",
     "label": "Agent Loop Patterns",
@@ -211,6 +223,18 @@
     "idPrefix": "last30days",
     "include": [
       "^skills/last30days/SKILL\\.md$"
+    ]
+  },
+  {
+    "repo": "ralphloops/ralphloops",
+    "branch": "main",
+    "label": "Ralph Loops",
+    "category": "Portable Ralph loops",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "ralphloops",
+    "include": [
+      "^examples/[^/]+/RALPH\\.md$"
     ]
   }
 ]

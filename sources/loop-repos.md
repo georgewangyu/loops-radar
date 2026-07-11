@@ -14,6 +14,7 @@ into the catalog, searched, opened, and copied as source markdown.
 | ChaoYue Awesome Loop Engineering | `ChaoYue0307/awesome-loop-engineering` | `examples/*-loop.json`, runnable loop markdown | Loop contracts and runnable examples for recurring AI-agent workflows. |
 | Cobus Loop Engineering | `cobusgreyling/loop-engineering` | 7 named `patterns/*.md` files | Production loop patterns for triage, PRs, CI, docs, dependencies, changelog, and cleanup. |
 | Pi Pipelines | `Rybens92/pi-pipelines` | `pipelines/*.pipeline.yaml` | Declarative reusable agent-loop pipelines with review gates and goal-loop convergence. |
+| Pi Autoresearch | `davebcn87/pi-autoresearch` | 3 `skills/autoresearch-*/SKILL.md` files | Reusable experiment setup, reviewable-finalization, and iteration-hook loops with metrics and safety checks. |
 | Agent Loop Patterns | `rohanbalkondekar/agent-loop-patterns` | `patterns/*/README.md` | Codex-oriented queue, modernization, metric, and review-gate loop patterns. |
 | Invincible Awesome Loop Engineering | `invincible04/awesome-loop-engineering` | `prompts/*.md` | Copy-paste loop prompt libraries and loop contract examples. |
 | Millrace | `tim-osterhus/millrace` | `src/millrace_ai/assets/loops/**/*.json` | Runtime loop graph assets for governed long-running agent workflows. |
@@ -25,6 +26,7 @@ into the catalog, searched, opened, and copied as source markdown.
 | Dimillian Skills | `Dimillian/Skills` | `*/SKILL.md` | Practitioner Codex skills with useful app-building and review patterns. |
 | Markdown Viewer Skills | `markdown-viewer/skills` | `*/SKILL.md` | Visual, document, and communication workflows that map well to loop cards. |
 | Last30Days Skill | `mvanhorn/last30days-skill` | `skills/last30days/SKILL.md` | A focused research loop for recent public-source scanning. |
+| Ralph Loops | `ralphloops/ralphloops` | `examples/*/RALPH.md` | Portable autonomous loop packages with deterministic feedback commands and explicit arguments. |
 
 ## Candidate Watchlist
 
