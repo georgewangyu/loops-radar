@@ -82,6 +82,18 @@
     ]
   },
   {
+    "repo": "faisalishfaq2005/loopflow",
+    "branch": "main",
+    "label": "LoopFlow",
+    "category": "YAML loop recipes",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "loopflow",
+    "include": [
+      "^(loops/pr-ready|templates/(debt-audit|docs-sync|release-check|test-and-fix))\\.yaml$"
+    ]
+  },
+  {
     "repo": "davebcn87/pi-autoresearch",
     "branch": "main",
     "label": "Pi Autoresearch",

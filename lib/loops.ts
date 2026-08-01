@@ -24,7 +24,7 @@ export type Loop = {
   markdown: string;
 };
 
-export const loopSourceCount = 19;
+export const loopSourceCount = 20;
 
 export const loops: Loop[] = [
   {
@@ -1737,6 +1737,110 @@ export const loops: Loop[] = [
     "sourcePath": "pipelines/tdd-review.pipeline.yaml",
     "sourceUrl": "https://github.com/Rybens92/pi-pipelines/blob/master/pipelines/tdd-review.pipeline.yaml",
     "markdown": "# tdd-review\n\n## Purpose\n\nFull TDD cycle with test quality and code review gates — ideal for new features or refactoring.\n\n## Source\n\n- Source: Pi Pipelines\n- Repository: Rybens92/pi-pipelines\n- Path: pipelines/tdd-review.pipeline.yaml\n\n## Workflow\n\n- analyze\n- write-tests\n- implement\n- apply-review-fixes\n- verify\n- propose-next\n- next-steps\n- risks\n\n## Verifier\n\nIncludes review gates or goal-loop checks in the source pipeline.\n\n## Source Artifact\n\n```yaml\nname: tdd-review\ndescription: \"Full TDD cycle with test quality and code review gates — ideal for new features or refactoring.\"\npreflight:\n  topics:\n    - scope of the implementation (what exactly to build, which files/modules are in play)\n    - test framework and conventions (pytest, vitest, jest, etc.)\n    - quality bar (strict TDD with full edge-case coverage or pragmatic with core paths)\n# Gate reviewers use the configured tier from model-tiers.json.\n# Use `judgeModel: big` or `judgeModel: small` to select the tier.\n# Avoid hardcoding model IDs (e.g. \"openai/gpt-4\") — tiers are portable across users and Pi instances.\nreport:\n  agent: planner\n  focus: \"TDD cycle outcomes, test quality, and implementation readiness\"\n\n\nstages:\n  - id: analyze\n    agent: planner\n    tier: big\n    task: >\n      Analyze the codebase and create a step-by-step implementation plan for: {task}.\n      Include acceptance criteria, test strategy, edge cases, architecture decisions,\n      likely files to change, risks, and unknowns.\n      If the task is ambiguous or important context is missing, say so explicitly.\n\n  - id: write-tests\n    agent: worker\n    tier: small\n    task: >\n      Write tests according to this plan: {outputs.analyze}.\n      Cover happy paths, error paths, boundary values, and edge cases.\n      Use the project's existing test framework and conventions.\n      Do not modify production code in this stage.\n      After writing tests, report changed files and the commands needed to run them.\n      Do not return a plan — write the actual test files now.\n    gate:\n      type: review-loop\n      maxRounds: 3\n      targetScore: 8\n      judgeModel: big\n      reviewers:\n        - focus: \"Do the tests cover ALL scenarios, acceptance criteria, and edge cases from the plan? Identify any missing cases.\"\n        - focus: \"Are tests production-ready: isolated, deterministic, maintainable, and following project conventions?\"\n        - focus: \"Are error paths, boundary values, async/failure behavior, and unusual inputs covered where relevant?\"\n\n  - id: implement\n    agent: worker\n    tier: small\n    task: >\n      Implement the code to make these tests pass: {outputs.write-tests}.\n      Follow the plan: {outputs.analyze}.\n      Keep changes minimal, focused, and consistent with project conventions.\n      Do not modify tests unless a test is clearly wrong; if you modify a test, explain why.\n      Make the actual code changes now — do not return a plan or summary.\n\n    gate:\n      type: review-loop\n      maxRounds: 3\n      targetScore: 8\n      judgeModel: big\n      reviewers:\n        - focus: \"Does the implementation satisfy all acceptance criteria and make the intended tests pass?\"\n        - focus: \"Is the code simple, readable, well-structured, and consistent with existing project patterns?\"\n        - focus: \"Does the implementation handle errors and edge cases without overengineering or hidden behavior?\"\n\n  - id: apply-review-fixes\n    agent: worker\n    tier: small\n    task: >\n      Apply ALL review critiques to the implementation.\n\n      ### Original Task\n\n      {task}\n\n      ### Plan\n\n      {outputs.analyze}\n\n      ### Implementation (with review notes)\n\n      {outputs.implement}\n\n      ### Reviewer Critiques\n\n      {lastFeedback}\n\n      Address EVERY specific critique point by point. If a critique is already\n      addressed in the implementation, confirm it. Do not skip any critique.\n\n      If no real critiques remain and the output already meets the quality bar,\n      confirm explicitly and stop — do not invent work.\n\n      Do not introduce regressions or unrelated changes. Keep edits focused.\n\n      ### Editing is required\n      Make the actual edits now — do not return a plan.\n\n    gate:\n      type: review-loop\n      maxRounds: 2\n      targetScore: 8\n      judgeModel: big\n      reviewers:\n        - focus: >\n            Precision of fixes: did the worker address EVERY specific critique\n            from the implementation review? No critique should remain\n            unaddressed or only partially addressed.\n        - focus: >\n            No regressions: did the fixes introduce new issues, break existing\n            functionality, or change behavior beyond what the critiques called for?\n            Is the overall result stable and coherent?\n        - focus: >\n            Code quality: is the fixed implementation clean, maintainable,\n            and consistent with project conventions and patterns?\n\n  - id: verify\n    agent: scout\n    tier: small\n    task: >\n      Run ALL tests in the project using the existing package manager or test scripts.\n      Report:\n      1. Which tests pass and fail\n      2. Any regressions introduced\n      3. Coverage if available\n      4. Commands attempted and any blockers\n      Implementation context (original): {outputs.implement}\n      Fixes applied: {outputs.apply-review-fixes}\n\n  - id: propose-next\n    parallel:\n      - id: next-steps\n        agent: oracle\n        tier: big\n        task: >\n          Based on the current project state, test results: {outputs.verify},\n          and this completed task ({task}),\n          what are the 3 most impactful things to work on next?\n          Consider technical debt, user-facing features, and architecture improvements.\n          Return exactly 3 prioritized next steps with rationale.\n\n      - id: risks\n        agent: reviewer\n        tier: big\n        task: >\n          Review the project state after this change: {outputs.verify}.\n          What risks, bottlenecks, or areas need attention before continuing?\n          Return a concise risk report with severity.\n```\n"
+  },
+  {
+    "id": "loopflow-pr-ready",
+    "name": "pr-ready",
+    "category": "YAML loop recipes",
+    "status": "external",
+    "cadence": "manual",
+    "summary": "Polish the current branch until it would survive code review.",
+    "whyUseful": "Polish the current branch until it would survive code review.",
+    "inputs": [],
+    "steps": [
+      "polish",
+      "review"
+    ],
+    "outputs": [],
+    "verifier": "Includes review gates or goal-loop checks in the source pipeline.",
+    "sourceName": "LoopFlow",
+    "sourceRepo": "faisalishfaq2005/loopflow",
+    "sourcePath": "loops/pr-ready.yaml",
+    "sourceUrl": "https://github.com/faisalishfaq2005/loopflow/blob/main/loops/pr-ready.yaml",
+    "markdown": "# pr-ready\n\n## Purpose\n\nPolish the current branch until it would survive code review.\n\n## Source\n\n- Source: LoopFlow\n- Repository: faisalishfaq2005/loopflow\n- Path: loops/pr-ready.yaml\n\n## Workflow\n\n- polish\n- review\n\n## Verifier\n\nIncludes review gates or goal-loop checks in the source pipeline.\n\n## Source Artifact\n\n```yaml\n# Run on a feature branch before opening a PR. The polish step cleans up the\n# branch; the gate reviews it the way a strict human reviewer would.\nname: pr-ready\ndescription: Polish the current branch until it would survive code review.\n\nbudget:\n  max_usd: 3.00\n  max_iterations: 3\n\ndefaults:\n  permission_mode: acceptEdits\n\nsteps:\n  - id: polish\n    role: >\n      You are the author of this branch doing a final pass before requesting\n      review. You fix real problems; you do not gold-plate.\n    prompt: |\n      This branch is about to become a pull request. Compare it against the\n      default branch and make it review-ready:\n\n      1. Run the project's linter and test suite; fix anything that fails.\n      2. Remove debug statements, commented-out code, and stray TODOs that\n         this branch introduced.\n      3. Check the diff for leftover scaffolding or changes unrelated to the\n         branch's purpose.\n\n      Summarize the branch's intent in two sentences, then list everything\n      you cleaned up.\n\n  - id: review\n    gate: true\n    role: >\n      You are the most demanding reviewer on this team. You have rejected\n      PRs for less.\n    prompt: |\n      Review this branch's diff against the default branch as if it were a\n      pull request:\n\n      - Does the change do one thing, and does the code actually do it?\n      - Are there obvious bugs, missed edge cases, or weakened tests?\n      - Is anything in the diff unrelated to the stated purpose?\n\n      Hold it to the bar of \"would I approve this PR?\".\n```\n"
+  },
+  {
+    "id": "loopflow-templates-debt-audit",
+    "name": "debt-audit",
+    "category": "YAML loop recipes",
+    "status": "external",
+    "cadence": "manual",
+    "summary": "Audit the codebase for tech debt and maintain a report that evolves run over run.",
+    "whyUseful": "Audit the codebase for tech debt and maintain a report that evolves run over run.",
+    "inputs": [],
+    "steps": [
+      "audit"
+    ],
+    "outputs": [],
+    "verifier": "See source artifact.",
+    "sourceName": "LoopFlow",
+    "sourceRepo": "faisalishfaq2005/loopflow",
+    "sourcePath": "templates/debt-audit.yaml",
+    "sourceUrl": "https://github.com/faisalishfaq2005/loopflow/blob/main/templates/debt-audit.yaml",
+    "markdown": "# debt-audit\n\n## Purpose\n\nAudit the codebase for tech debt and maintain a report that evolves run over run.\n\n## Source\n\n- Source: LoopFlow\n- Repository: faisalishfaq2005/loopflow\n- Path: templates/debt-audit.yaml\n\n## Workflow\n\n- audit\n\n## Verifier\n\nSee source artifact.\n\n## Source Artifact\n\n```yaml\n# A discovery loop: run it on a schedule and it builds a living debt report.\n# Memory makes each run aware of what the last run found.\nname: debt-audit\ndescription: Audit the codebase for tech debt and maintain a report that evolves run over run.\n\nbudget:\n  max_usd: 1.50\n  max_iterations: 1\n\ndefaults:\n  permission_mode: acceptEdits\n\nsteps:\n  - id: audit\n    role: >\n      You are a pragmatic tech-debt auditor. You report what genuinely slows\n      this team down, not stylistic nitpicks.\n    prompt: |\n      Audit this repository for technical debt:\n\n      - TODO/FIXME/HACK comments and how stale they are\n      - dead code and unused exports\n      - outdated or vulnerable dependencies\n      - duplicated logic that should be consolidated\n      - missing test coverage on load-bearing modules\n\n      Your loop memory contains the findings of previous audits. Compare against\n      them: note what was fixed since last time, what is new, and what keeps\n      being ignored.\n\n      Write the full report to `.loopflow/reports/debt-audit.md` (overwrite it),\n      ordered by impact. End your response with a five-line executive summary —\n      that summary is what the next run will see in its memory.\n```\n"
+  },
+  {
+    "id": "loopflow-templates-docs-sync",
+    "name": "docs-sync",
+    "category": "YAML loop recipes",
+    "status": "external",
+    "cadence": "manual",
+    "summary": "Detect documentation that has drifted from the code, fix it, and verify the fixes.",
+    "whyUseful": "Detect documentation that has drifted from the code, fix it, and verify the fixes.",
+    "inputs": [],
+    "steps": [
+      "sync",
+      "verify"
+    ],
+    "outputs": [],
+    "verifier": "Includes review gates or goal-loop checks in the source pipeline.",
+    "sourceName": "LoopFlow",
+    "sourceRepo": "faisalishfaq2005/loopflow",
+    "sourcePath": "templates/docs-sync.yaml",
+    "sourceUrl": "https://github.com/faisalishfaq2005/loopflow/blob/main/templates/docs-sync.yaml",
+    "markdown": "# docs-sync\n\n## Purpose\n\nDetect documentation that has drifted from the code, fix it, and verify the fixes.\n\n## Source\n\n- Source: LoopFlow\n- Repository: faisalishfaq2005/loopflow\n- Path: templates/docs-sync.yaml\n\n## Workflow\n\n- sync\n- verify\n\n## Verifier\n\nIncludes review gates or goal-loop checks in the source pipeline.\n\n## Source Artifact\n\n```yaml\n# Keeps documentation honest: one agent updates docs to match the code,\n# a gate verifies every claim against the actual source.\nname: docs-sync\ndescription: Detect documentation that has drifted from the code, fix it, and verify the fixes.\n\nbudget:\n  max_usd: 2.00\n  max_iterations: 2\n\nworktree: true\n\ndefaults:\n  permission_mode: acceptEdits\n\nsteps:\n  - id: sync\n    role: >\n      You are a technical writer who reads source code. You never document\n      behavior you have not verified in the code itself.\n    prompt: |\n      Compare this project's documentation (README and any docs/ directory)\n      against the actual code:\n\n      - CLI flags, commands, and options that were renamed or removed\n      - code examples that no longer compile or run\n      - described behavior that no longer matches the implementation\n      - new public functionality that is entirely undocumented\n\n      Fix every stale section you find. Keep the existing tone and structure.\n      List each change you made and the source file that justifies it.\n\n  - id: verify\n    gate: true\n    role: >\n      You are a reviewer who checks documentation claims against source code,\n      line by line.\n    prompt: |\n      A previous agent updated the documentation in this working tree to match\n      the code. Inspect the diff and verify each changed claim against the\n      actual source. Fail if any documented flag, example, or behavior still\n      does not match the implementation.\n```\n"
+  },
+  {
+    "id": "loopflow-templates-release-check",
+    "name": "release-check",
+    "category": "YAML loop recipes",
+    "status": "external",
+    "cadence": "manual",
+    "summary": "Fix all pre-release blockers — tests, lint, coverage — and verify fixes are real.",
+    "whyUseful": "Fix all pre-release blockers — tests, lint, coverage — and verify fixes are real.",
+    "inputs": [],
+    "steps": [
+      "fix",
+      "verify"
+    ],
+    "outputs": [],
+    "verifier": "Includes review gates or goal-loop checks in the source pipeline.",
+    "sourceName": "LoopFlow",
+    "sourceRepo": "faisalishfaq2005/loopflow",
+    "sourcePath": "templates/release-check.yaml",
+    "sourceUrl": "https://github.com/faisalishfaq2005/loopflow/blob/main/templates/release-check.yaml",
+    "markdown": "# release-check\n\n## Purpose\n\nFix all pre-release blockers — tests, lint, coverage — and verify fixes are real.\n\n## Source\n\n- Source: LoopFlow\n- Repository: faisalishfaq2005/loopflow\n- Path: templates/release-check.yaml\n\n## Workflow\n\n- fix\n- verify\n\n## Verifier\n\nIncludes review gates or goal-loop checks in the source pipeline.\n\n## Source Artifact\n\n```yaml\n# Run before every release cut. One agent fixes everything blocking the\n# release; a gate verifies the fixes are genuine before you tag.\n#\n# Covers: failing tests, lint errors, coverage regression, and debug\n# artifacts left in the diff. Adapt the prompts to match your project's\n# specific toolchain (e.g. replace \"npm test\" with \"pnpm test\", add\n# \"cargo clippy\", etc.).\nname: release-check\ndescription: Fix all pre-release blockers — tests, lint, coverage — and verify fixes are real.\n\nbudget:\n  max_usd: 4.00\n  max_iterations: 3\n\ndefaults:\n  permission_mode: acceptEdits\n\nsteps:\n  - id: fix\n    role: >\n      You are a careful maintainer preparing a release. You fix root causes —\n      never symptoms. You never modify test assertions to make a test pass,\n      and you never delete or skip a test to make coverage look clean.\n    prompt: |\n      This project is about to cut a release. Run the full pre-release checklist:\n\n      1. Run the test suite. Fix any failures at the root cause — not by\n         modifying tests or lowering thresholds.\n      2. Run the linter (if configured). Fix any errors; treat warnings as\n         errors if they appear on changed lines.\n      3. Check that code coverage meets the project threshold. If it has\n         dropped, add tests for the uncovered paths — do not lower the\n         threshold.\n      4. Scan the diff for anything that should not ship: debug statements,\n         console.log calls added during development, TODO comments introduced\n         on this branch, commented-out code blocks.\n\n      Summarize what was failing, the root cause of each issue, and exactly\n      what you changed.\n\n  - id: verify\n    gate: true\n    role: >\n      You are a skeptical senior engineer doing a final release sign-off.\n      You did not write these fixes. You verify every claim with evidence —\n      you never take another agent's word for it.\n    prompt: |\n      The previous agent claims the codebase is release-ready. Verify that.\n\n      1. Run the test suite yourself — confirm it is actually green.\n      2. Run git diff — read every changed line in the source files.\n      3. For each fix: does it address the root cause, or does it just make\n         the symptom disappear? Look specifically for: lowered thresholds,\n         weakened assertions, skipped tests, swallowed exceptions.\n      4. Check that no debug code, stray logs, or development artifacts\n         remain in the diff.\n      5. If coverage was an issue: confirm the new tests actually exercise\n         the logic, not just inflate the line count.\n\n      VERDICT: PASS — if the codebase is genuinely release-ready.\n      VERDICT: FAIL — if anything is wrong. Be specific: your feedback is\n      the only instruction the next agent gets, so name the exact file,\n      line, and issue.\n```\n"
+  },
+  {
+    "id": "loopflow-templates-test-and-fix",
+    "name": "test-and-fix",
+    "category": "YAML loop recipes",
+    "status": "external",
+    "cadence": "manual",
+    "summary": "Run the test suite, fix any failures, and have an independent reviewer verify the fix.",
+    "whyUseful": "Run the test suite, fix any failures, and have an independent reviewer verify the fix.",
+    "inputs": [],
+    "steps": [
+      "fix",
+      "review"
+    ],
+    "outputs": [],
+    "verifier": "Includes review gates or goal-loop checks in the source pipeline.",
+    "sourceName": "LoopFlow",
+    "sourceRepo": "faisalishfaq2005/loopflow",
+    "sourcePath": "templates/test-and-fix.yaml",
+    "sourceUrl": "https://github.com/faisalishfaq2005/loopflow/blob/main/templates/test-and-fix.yaml",
+    "markdown": "# test-and-fix\n\n## Purpose\n\nRun the test suite, fix any failures, and have an independent reviewer verify the fix.\n\n## Source\n\n- Source: LoopFlow\n- Repository: faisalishfaq2005/loopflow\n- Path: templates/test-and-fix.yaml\n\n## Workflow\n\n- fix\n- review\n\n## Verifier\n\nIncludes review gates or goal-loop checks in the source pipeline.\n\n## Source Artifact\n\n```yaml\n# The canonical loop: one agent fixes, a different agent verifies.\n# The fixer never grades its own homework.\nname: test-and-fix\ndescription: Run the test suite, fix any failures, and have an independent reviewer verify the fix.\n\nbudget:\n  max_usd: 2.00\n  max_iterations: 3\n\ndefaults:\n  permission_mode: acceptEdits\n\nsteps:\n  - id: fix\n    role: >\n      You are a careful maintainer of this codebase. You make the smallest\n      change that fixes the problem, and you never weaken or delete a test\n      to make it pass.\n    prompt: |\n      Run this project's test suite. If everything passes, say so and stop.\n\n      If there are failures:\n      1. Diagnose the root cause of each failure.\n      2. Fix the underlying code (not the test, unless the test itself is wrong —\n         and if so, explain why).\n      3. Re-run the tests to confirm they pass.\n\n      Summarize what was failing, what you changed, and why.\n\n  - id: review\n    gate: true\n    role: >\n      You are a skeptical senior engineer reviewing a change you did not write.\n      You trust nothing without evidence.\n    prompt: |\n      A previous agent claims to have fixed failing tests in this working tree.\n      Verify the claim:\n\n      1. Inspect the diff (git diff) and judge whether the changes fix root\n         causes or merely mask symptoms.\n      2. Re-run the test suite yourself and confirm it passes.\n      3. Check that no test was weakened, skipped, or deleted to force a pass.\n\n      Pass only if the fix is genuine and the suite is green.\n```\n"
   },
   {
     "id": "pi-autoresearch-autoresearch-create",

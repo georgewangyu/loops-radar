@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-08-01T17:07:50.011Z",
-  "loopCount": 260,
+  "updatedAt": "2026-08-01T17:17:20.661Z",
+  "loopCount": 265,
   "loopIds": [
     "addy-api-and-interface-design",
     "addy-browser-testing-with-devtools",
@@ -130,6 +130,11 @@
     "invincible-prompts-subagents-maker-checker",
     "invincible-prompts-verification-rubrics",
     "last30days-last30days",
+    "loopflow-pr-ready",
+    "loopflow-templates-debt-audit",
+    "loopflow-templates-docs-sync",
+    "loopflow-templates-release-check",
+    "loopflow-templates-test-and-fix",
     "markdown-viewer-archimate",
     "markdown-viewer-architecture",
     "markdown-viewer-bpmn",
