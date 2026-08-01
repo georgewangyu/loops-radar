@@ -14,7 +14,7 @@ into the catalog, searched, opened, and copied as source markdown.
 | ChaoYue Awesome Loop Engineering | `ChaoYue0307/awesome-loop-engineering` | `examples/*-loop.json`, runnable loop markdown | Loop contracts and runnable examples for recurring AI-agent workflows. |
 | Cobus Loop Engineering | `cobusgreyling/loop-engineering` | 7 named `patterns/*.md` files | Production loop patterns for triage, PRs, CI, docs, dependencies, changelog, and cleanup. |
 | Pi Pipelines | `Rybens92/pi-pipelines` | `pipelines/*.pipeline.yaml` | Declarative reusable agent-loop pipelines with review gates and goal-loop convergence. |
-| LoopFlow | `faisalishfaq2005/loopflow` | 5 curated `loops/*.yaml` and `templates/*.yaml` recipes | MIT-licensed fixer/reviewer, audit, docs-sync, release, and PR-readiness loops with budgets and independent gates. |
+| LoopFlow | `faisalishfaq2005/loopflow` | 5 curated `loops/*.yaml` and `templates/*.yaml` recipes | MIT-licensed fixer/reviewer, audit, docs-sync, release, and PR-readiness loops with budgets and independent gates. [Third-party notice](../THIRD_PARTY_NOTICES.md#loopflow). |
 | Pi Autoresearch | `davebcn87/pi-autoresearch` | 3 `skills/autoresearch-*/SKILL.md` files | Reusable experiment setup, reviewable-finalization, and iteration-hook loops with metrics and safety checks. |
 | Agent Loop Patterns | `rohanbalkondekar/agent-loop-patterns` | `patterns/*/README.md` | Codex-oriented queue, modernization, metric, and review-gate loop patterns. |
 | Invincible Awesome Loop Engineering | `invincible04/awesome-loop-engineering` | `prompts/*.md` | Copy-paste loop prompt libraries and loop contract examples. |
