@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-08-09T04:59:16.075Z",
-  "loopCount": 265,
+  "updatedAt": "2026-08-15T17:12:18.998Z",
+  "loopCount": 277,
   "loopIds": [
     "addy-api-and-interface-design",
     "addy-browser-testing-with-devtools",
@@ -30,6 +30,7 @@
     "agent-loop-patterns-patterns-modernization-campaign-loop-readme",
     "agent-loop-patterns-patterns-queue-burndown-loop-readme",
     "agent-loop-patterns-patterns-review-gate-loop-readme",
+    "ai-news-heat-refresh",
     "anthropic-algorithmic-art",
     "anthropic-brand-guidelines",
     "anthropic-canvas-design",
@@ -66,6 +67,7 @@
     "awesome-agent-loops-wait-for-ci",
     "awesome-agent-loops-watch-tests",
     "biweekly-sprint-retro-and-next-sprint-planning",
+    "builder-radar-publisher",
     "chaoyue-accessibility-regression-loop",
     "chaoyue-adversarial-red-team-loop",
     "chaoyue-agent-memory-lifecycle-loop",
@@ -99,7 +101,9 @@
     "cobus-patterns-pr-babysitter",
     "codex-thread-title-hygiene",
     "cross-repo-pattern-propagation-scan",
+    "daily-email-safe-reply-review",
     "daily-morning-routine",
+    "daily-sports-radar-scan",
     "dimillian-app-store-changelog",
     "dimillian-bug-hunt-swarm",
     "dimillian-github",
@@ -151,9 +155,12 @@
     "markdown-viewer-uml",
     "markdown-viewer-vega",
     "monitor-ai-warehouse-and-wono",
+    "monthly-agent-instruction-stack-audit",
+    "monthly-personal-data-freshness-review",
     "monthly-skill-cleaner-scan",
     "nightly-commit-and-push-review",
     "nightly-daily-workflow-social-draft-loop",
+    "nightly-knowledge-wiki-refresh",
     "pi-autoresearch-autoresearch-create",
     "pi-autoresearch-autoresearch-finalize",
     "pi-autoresearch-autoresearch-hooks",
@@ -233,6 +240,7 @@
     "pm-pm-toolkit-grammar-check",
     "pm-pm-toolkit-privacy-policy",
     "pm-pm-toolkit-review-resume",
+    "private-content-radar",
     "ralphloops-bug-hunter-ralph",
     "ralphloops-dependency-updater-ralph",
     "ralphloops-improve-codebase-ralph",
@@ -265,7 +273,11 @@
     "vercel-writing-guidelines",
     "wake-codex-repo-maintenance-loop",
     "weekly-agent-loop-scan",
+    "weekly-ai-paper-radar",
     "weekly-codex-automation-catalog-sync",
-    "weekly-file-organization-review"
+    "weekly-file-organization-review",
+    "weekly-radar-website-frontend-propagation-review",
+    "weekly-radar-website-sync-and-source-discovery",
+    "weekly-short-form-final-video-organizer"
   ]
 }
