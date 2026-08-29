@@ -84,16 +84,59 @@ function parseFrontmatter(markdown) {
     return fields;
   }
 
-  for (const line of match[1].split("\n")) {
-    const field = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+  const lines = match[1].split("\n");
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const field = lines[index].match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
     if (!field) {
       continue;
     }
 
-    fields[field[1]] = field[2].trim().replace(/^["']|["']$/g, "");
+    const rawValue = field[2].trim();
+    const blockScalar = rawValue.match(/^([>|])[-+]?$/);
+
+    if (blockScalar) {
+      const blockLines = [];
+      while (index + 1 < lines.length && !/^[A-Za-z0-9_-]+:\s*/.test(lines[index + 1])) {
+        index += 1;
+        blockLines.push(lines[index]);
+      }
+
+      const nonEmptyIndents = blockLines
+        .filter((line) => line.trim())
+        .map((line) => line.match(/^\s*/)?.[0].length || 0);
+      const indent = nonEmptyIndents.length > 0 ? Math.min(...nonEmptyIndents) : 0;
+      const deindented = blockLines.map((line) => line.slice(Math.min(indent, line.length)));
+
+      fields[field[1]] =
+        blockScalar[1] === ">"
+          ? deindented
+              .join("\n")
+              .split(/\n\s*\n/)
+              .map((paragraph) => paragraph.replace(/\s*\n\s*/g, " ").trim())
+              .filter(Boolean)
+              .join("\n")
+          : deindented.join("\n").trim();
+      continue;
+    }
+
+    fields[field[1]] = rawValue.replace(/^["']|["']$/g, "");
   }
 
   return fields;
+}
+
+function validateLoops(loops) {
+  const placeholderScalars = new Set([">", ">-", ">+", "|", "|-", "|+"]);
+
+  for (const loop of loops) {
+    for (const field of ["name", "summary", "whyUseful"]) {
+      const value = compactText(loop[field]);
+      if (!value || placeholderScalars.has(value)) {
+        throw new Error(`${loop.id} has invalid ${field}: ${JSON.stringify(loop[field])}`);
+      }
+    }
+  }
 }
 
 function stripFrontmatter(markdown) {
@@ -209,7 +252,8 @@ function toLoop(source, pathname, markdown, usedIds) {
     stripFrontmatter(markdown),
     "See the source markdown for the loop details.",
   );
-  const whyUseful = section(markdown, "Why It Is Useful");
+  const whyUseful =
+    section(markdown, "Why It Is Useful") || section(markdown, "Why This Exists");
   const workflow =
     section(markdown, "Workflow") ||
     section(markdown, "Process") ||
@@ -252,19 +296,36 @@ function compactText(value) {
 }
 
 function yamlScalar(raw, key) {
+  const block = raw.match(
+    new RegExp(`^${key}:[ \\t]*([>|])[-+]?[ \\t]*\\n((?:[ \\t]+[^\\n]*(?:\\n|$))+)`, "m"),
+  );
+  if (block) {
+    const lines = block[2].replace(/\n$/, "").split("\n");
+    const nonEmptyIndents = lines
+      .filter((line) => line.trim())
+      .map((line) => line.match(/^\s*/)?.[0].length || 0);
+    const indent = nonEmptyIndents.length > 0 ? Math.min(...nonEmptyIndents) : 0;
+    const deindented = lines.map((line) => line.slice(Math.min(indent, line.length)));
+
+    return block[1] === ">"
+      ? deindented
+          .join("\n")
+          .split(/\n\s*\n/)
+          .map((paragraph) => paragraph.replace(/\s*\n\s*/g, " ").trim())
+          .filter(Boolean)
+          .join("\n")
+      : deindented.join("\n").trim();
+  }
+
   const quoted = raw.match(new RegExp(`^${key}:\\s*["']([^"']+)["']\\s*$`, "m"));
   if (quoted) {
     return compactText(quoted[1]);
   }
 
-  const plain = raw.match(new RegExp(`^${key}:\\s*([^>\\n][^\\n]*)$`, "m"));
+  const plain = raw.match(new RegExp(`^${key}:[ \\t]*(.*)$`, "m"));
   if (plain) {
-    return compactText(plain[1]);
-  }
-
-  const block = raw.match(new RegExp(`^${key}:\\s*>\\s*\\n((?:\\s+[^\\n]*\\n?)+)`, "m"));
-  if (block) {
-    return compactText(block[1].replace(/^\s+/gm, ""));
+    const value = compactText(plain[1]);
+    return /^[>|][-+]?$/.test(value) ? "" : value;
   }
 
   return "";
@@ -552,6 +613,8 @@ async function main() {
   for (const source of sources) {
     loops.push(...(await syncSource(source, usedIds)));
   }
+
+  validateLoops(loops);
 
   const outputPath = path.join("lib", "loops.ts");
   const generated = generatedModule(loops, sources.length);
