@@ -28,6 +28,7 @@ into the catalog, searched, opened, and copied as source markdown.
 | Markdown Viewer Skills | `markdown-viewer/skills` | `*/SKILL.md` | Visual, document, and communication workflows that map well to loop cards. |
 | Last30Days Skill | `mvanhorn/last30days-skill` | `skills/last30days/SKILL.md` | A focused research loop for recent public-source scanning. |
 | Ralph Loops | `ralphloops/ralphloops` | `examples/*/RALPH.md` | Portable autonomous loop packages with deterministic feedback commands and explicit arguments. |
+| Awesome Agentic Loops | `mrsarac/awesome-agentic-loops` | `loops/*.md` | MIT-licensed proof-oriented operating loops with explicit triggers, receipts, stop conditions, and approval gates. [Third-party notice](../THIRD_PARTY_NOTICES.md#awesome-agentic-loops). |
 
 ## Candidate Watchlist
 

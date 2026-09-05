@@ -248,5 +248,17 @@
     "include": [
       "^examples/[^/]+/RALPH\\.md$"
     ]
+  },
+  {
+    "repo": "mrsarac/awesome-agentic-loops",
+    "branch": "main",
+    "label": "Awesome Agentic Loops",
+    "category": "Proof-oriented operating loops",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "agentic-loop-atlas",
+    "include": [
+      "^loops/[^/]+\\.md$"
+    ]
   }
 ]
