@@ -260,5 +260,17 @@
     "include": [
       "^loops/[^/]+\\.md$"
     ]
+  },
+  {
+    "repo": "sdwolf4103/loop.md",
+    "branch": "main",
+    "label": "Loop.md Examples",
+    "category": "Stateful workflow loops",
+    "defaultStatus": "external",
+    "defaultCadence": "manual",
+    "idPrefix": "loop-md",
+    "include": [
+      "^skills/loop/examples/(?:[^/]+|extra/[^/]+)/LOOP\\.md$"
+    ]
   }
 ]
