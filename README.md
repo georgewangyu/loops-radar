@@ -280,10 +280,14 @@ Open `http://localhost:4189`.
 npm run feed:weekly
 npm run --silent feed:latest
 npm run validate:loops
-npm run typecheck
+npm run check   # typecheck and lint
 npm run build
 npm run test:ui
 ```
+
+CI (`.github/workflows/ci.yml`) runs `npm run check` and `npm run build` on
+every push to `main` and on pull requests. `validate:loops` is not in CI
+because it fetches the source repos over the network.
 
 `npm run test:ui` runs the Playwright suite against a production `next start`
 server. It covers catalog search/filtering, preview buttons, row click-through

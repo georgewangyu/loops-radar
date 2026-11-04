@@ -425,7 +425,7 @@ export function LoopsRadarApp({ loops }: Props) {
             Install the skill so your agent can search the catalog, choose a
             relevant loop, adapt the source markdown into the work ahead, and
             deliver daily or weekly loop digests from the public weekly feed.
-            Ask for "Recommended today" when you want a compact daily outlook.
+            Ask for &quot;Recommended today&quot; when you want a compact daily outlook.
           </p>
         </div>
         {leadUnlocked ? (
