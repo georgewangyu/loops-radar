@@ -82,36 +82,38 @@ const featuredLoopIds = new Set([
   "dimillian-review-and-simplify-changes",
 ]);
 
-async function errorMessageFor(response: Response) {
+type ErrorCopy = {
+  labels: Record<string, string>;
+  unavailable: string;
+  invalid: string;
+};
+
+const submitErrorCopy: ErrorCopy = {
+  labels: issueLabels,
+  unavailable: "Something went wrong. Try again or send the idea another way.",
+  invalid: "Please check the form and try again.",
+};
+
+const leadErrorCopy: ErrorCopy = {
+  labels: leadLabels,
+  unavailable: "Could not unlock the install command. Try again in a moment.",
+  invalid: "Please check the fields and try again.",
+};
+
+async function errorMessageFor(response: Response, copy: ErrorCopy) {
   if (response.status !== 400) {
-    return "Something went wrong. Try again or send the idea another way.";
+    return copy.unavailable;
   }
 
   const body = (await response.json().catch(() => null)) as ErrorResponse | null;
   const fieldMessages = Object.entries(body?.issues || {}).flatMap(
     ([field, messages]) =>
-      (messages || []).map((message) => `${issueLabels[field] || field}: ${message}`),
+      (messages || []).map((message) => `${copy.labels[field] || field}: ${message}`),
   );
 
   return fieldMessages.length > 0
     ? fieldMessages.join(" ")
-    : body?.error || "Please check the form and try again.";
-}
-
-async function leadErrorMessageFor(response: Response) {
-  if (response.status !== 400) {
-    return "Could not unlock the install command. Try again in a moment.";
-  }
-
-  const body = (await response.json().catch(() => null)) as ErrorResponse | null;
-  const fieldMessages = Object.entries(body?.issues || {}).flatMap(
-    ([field, messages]) =>
-      (messages || []).map((message) => `${leadLabels[field] || field}: ${message}`),
-  );
-
-  return fieldMessages.length > 0
-    ? fieldMessages.join(" ")
-    : body?.error || "Please check the fields and try again.";
+    : body?.error || copy.invalid;
 }
 
 function parseLoopDate(loop: Loop) {
@@ -319,7 +321,7 @@ export function LoopsRadarApp({ loops }: Props) {
 
       if (!response.ok) {
         setLeadStatus("error");
-        setLeadError(await leadErrorMessageFor(response));
+        setLeadError(await errorMessageFor(response, leadErrorCopy));
         return;
       }
 
@@ -328,7 +330,7 @@ export function LoopsRadarApp({ loops }: Props) {
       setLeadStatus("success");
     } catch {
       setLeadStatus("error");
-      setLeadError("Could not unlock the install command. Try again in a moment.");
+      setLeadError(leadErrorCopy.unavailable);
     }
   }
 
@@ -359,7 +361,7 @@ export function LoopsRadarApp({ loops }: Props) {
 
       if (!response.ok) {
         setFormStatus("error");
-        setError(await errorMessageFor(response));
+        setError(await errorMessageFor(response, submitErrorCopy));
         return;
       }
 
@@ -368,7 +370,7 @@ export function LoopsRadarApp({ loops }: Props) {
       setFormStatus("success");
     } catch {
       setFormStatus("error");
-      setError("Something went wrong. Try again or send the idea another way.");
+      setError(submitErrorCopy.unavailable);
     }
   }
 
