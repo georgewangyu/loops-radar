@@ -1,4 +1,4 @@
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const root = process.cwd();
@@ -129,7 +129,7 @@ function oneLine(value, fallback = "See source markdown.") {
   return (value || fallback).replace(/\s+/g, " ").trim();
 }
 
-function renderFeed({ date, loops, seenIds, featured, hasNewLoops, newLoopCount }) {
+function renderFeed({ date, loops, featured, hasNewLoops, newLoopCount }) {
   const sourceCount = new Set(loops.map((loop) => loop.sourceName)).size;
   const rotation = dailyRotation(featured);
   const loopIds = featured.map((loop) => loop.id);
@@ -220,7 +220,7 @@ async function main() {
   await mkdir(path.dirname(memoryPath), { recursive: true });
   await writeFile(
     feedPath,
-    renderFeed({ date, loops, seenIds, ...selection }),
+    renderFeed({ date, loops, ...selection }),
     "utf8",
   );
   await writeFile(
